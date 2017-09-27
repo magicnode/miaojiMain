@@ -59,9 +59,9 @@
           <cell class="office" title="寄件站点" is-link link="/hallmap">{{office || '选择寄件站点'}}</cell>
           <selector direction="rtl" v-model="expresstype" placeholder="选择快递品牌"   title="快递品牌" name="district" :options="brand" @on-change="onChange">
           </selector>
-          <x-textarea type="text" title="物品描述" :show-counter="false" :max="max" :autosize="true" placeholder="描述你的物品 (200字限制)" :rows="1" v-model="describe" @on-focus="hideFooter" @on-blur="onChangeText('describe')">
+          <x-textarea type="text" title="物品描述" :show-counter="false" :max="max" :autosize="true" placeholder="描述你的物品 (200字限制)" :rows="1" v-model="describe" :height="describe ? describe.length + 22 : 20" @on-focus="hideFooter" @on-blur="onChangeText('describe')">
           </x-textarea>
-          <x-textarea type="text" title="备注" :max="max" placeholder="添加备注 (200字限制)" :autosize="true" :show-counter="false" v-model="label" :rows="1" @on-focus="hideFooter" @on-blur="onChangeText('note')">
+          <x-textarea type="text" title="备注" :max="max" placeholder="添加备注 (200字限制)" :autosize="true" :show-counter="false" v-model="label" :height="label ? label.length + 22 : 20" :rows="1" @on-focus="hideFooter" @on-blur="onChangeText('note')">
           </x-textarea>
         </group>
       </div>
@@ -95,7 +95,7 @@ export default {
     this.expresstype = mjBrand || undefined
     this.describe = window.localStorage.getItem('mj_send_describe')
     this.note = window.localStorage.getItem('mj_send_note')
-    this.initBrand({id: addressInfo.userId})
+    this.initBrand({id: addressInfo ? addressInfo.userId : 0})
   },
   mounted () {
     window.document.title = '到点寄件'
@@ -128,7 +128,8 @@ export default {
       label: '',
       office: '',
       expresstype: undefined,
-      loading: false
+      loading: false,
+      isCanBeSend: false
     }
   },
   methods: {
@@ -167,6 +168,13 @@ export default {
       this.$router.push({path})
     },
     async submitSend () {
+      if (!this.isCanBeSend) {
+        return this.$vux.toast.show({
+          text: '接口升级中，暂停服务',
+          type: 'warn',
+          width: '20rem'
+        })
+      }
       if (this.loading) return
       let addressInfo = window.localStorage.getItem('mj_addressInfo')
       addressInfo = JSON.parse(addressInfo)
