@@ -171,7 +171,12 @@ export default {
           brand = ''
         } else {
           let data = brandRes.data
-          brand = '<p class="pull-brand">接入品牌: ' + data + '</p>'
+          let brandList = []
+          for (let i = 0, len = data.length; i < len; i++) {
+            const item = data[i]
+            brandList.push(item.brand)
+          }
+          brand = '<p class="pull-brand">接入品牌: ' + brandList + '</p>'
         }
         setOfficeMaker({position, info, error, brand})
       } else {

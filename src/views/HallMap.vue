@@ -122,8 +122,12 @@ export default {
               brand = ''
             } else {
               let data = brandRes.data
-              // brand = '<p>此站点引入的快递品牌有: ' + data + '</p>'
-              brand = '<p class="pull-brand">接入品牌: ' + data + '</p>'
+              let brandList = []
+              for (let i = 0, len = data.length; i < len; i++) {
+                const item = data[i]
+                brandList.push(item.brand)
+              }
+              brand = '<p class="pull-brand">接入品牌: ' + brandList + '</p>'
             }
             let officeBtnId = ''
             window.AMapUI.loadUI(['overlay/SimpleInfoWindow'], function (SimpleInfoWindow) {

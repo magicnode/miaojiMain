@@ -18,8 +18,8 @@
             <span class="bgblue">寄</span>
           </div>
           <div class="sendqr-detail-box__detail">
-            <p>{{data.sendAddress.name + '   ' + data.sendAddress.mobile}}</p>
-            <p>{{data.sendAddress.province + data.sendAddress.district + data.sendAddress.address}}</p>
+            <p>{{data.sendName + '   ' + data.sendMobile}}</p>
+            <p>{{data.sendProvince + data.sendDistrict + data.sendAddress}}</p>
           </div>
         </div>
         <div class="sendqr-detail-box">
@@ -27,14 +27,14 @@
             <span class="bgyellow">收</span>
           </div>
           <div class="sendqr-detail-box__detail">
-            <p>{{data.receiptAddress.name + '   ' + data.receiptAddress.mobile}}</p>
-            <p>{{data.receiptAddress.province + data.receiptAddress.district + data.receiptAddress.address}}</p>
+            <p>{{data.reciveName + '   ' + data.reciveMobile}}</p>
+            <p>{{data.reciveProvince + data.reciveDistrict + data.reciveAddress}}</p>
           </div>
         </div>
         <div class="sendqr-detail-box">
           <span class="sendqr-detail-box__title">寄件站点</span>
           <span class="sendqr-detail-box__yin">:</span>
-          <span class="sendqr-detail-box__content">{{data.office.name}}</span>
+          <span class="sendqr-detail-box__content">{{data.officeName}}</span>
           <img style="width: 1.4rem;padding: 0 1rem;position: absolute;right: 6px;" src="../assets/images/new/pic_ico_map.png" alt="地址" @click="watchOffice(data.officeId)">
         </div>
         <div class="sendqr-detail-box">

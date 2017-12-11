@@ -1,9 +1,9 @@
-// wu cong
+// wu cong fake url
 // let url = 'http://1a699l6063.imwork.net/WeChatService/'
-// xiao hang
-// let url = 'http://192.168.0.201:8888/WeChatService/'
+// wu cong 本地
+let url = 'http://192.168.0.168:8088/WeChatService/'
 // online app 云端服务
-let url = 'http://app.quandikeji.com/WeChatService/'
+// let url = 'http://app.quandikeji.com/WeChatService/'
 
 if (process.env.NODE_ENV !== 'development') {
   url = 'http://app.quandikeji.com/WeChatService/'

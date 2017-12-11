@@ -1,4 +1,5 @@
 import {send as sendApi, address as addressApi} from '@/api'
+import request from '@/util/request'
 import axios from 'axios'
 import window from 'window'
 
@@ -68,11 +69,15 @@ export const getters = {
 export const actions = {
   async setSend ({ commit }) {
     try {
-      const res = await instance.get(sendApi.index, {
-        params: {userId: local.getItem('mj_userId')}
+      const res = await request({
+        url: sendApi.index,
+        method: 'parampost',
+        paramkey: 'param',
+        data: JSON.stringify({userId: local.getItem('mj_userId')})
       })
-      if (res.status === 200) {
-        let resdata = res.data
+      console.log('res', res)
+      if (res.code === 200) {
+        let resdata = res.obj
         let data = {}
         let wait = []
         let ready = []
@@ -84,12 +89,12 @@ export const actions = {
             ready.push(item)
           }
         }
-        wait.sort(function (a, b) {
-          return b.createTime - a.createTime
-        })
-        ready.sort(function (a, b) {
-          return b.createTime - a.createTime
-        })
+        // wait.sort(function (a, b) {
+        //   return b.createTime - a.createTime
+        // })
+        // ready.sort(function (a, b) {
+        //   return b.createTime - a.createTime
+        // })
         data.wait = wait
         data.ready = ready
         data.init = true
@@ -143,19 +148,32 @@ export const actions = {
         sendAddressId = state.add.sendAddressId,
         type = state.add.type }) {
     try {
-      const res = await axios.get(sendApi.create, {
-        params: {
-          order,
-          brand,
-          describe,
-          note,
-          office,
-          receiptAddressId,
-          sendAddressId,
-          type,
-          userId: local.getItem('mj_userId')
+      let paramData = {
+        order,
+        brand,
+        describe,
+        note,
+        officeId: office,
+        receiptAddressId,
+        sendAddressId,
+        type,
+        userId: local.getItem('mj_userId'),
+        sendType: 2
+      }
+      console.log('paramData', paramData)
+      paramData = JSON.stringify(paramData)
+      let param = new URLSearchParams()
+      param.append('param', paramData)
+      const res = await axios({
+        url: sendApi.create,
+        method: 'post',
+        data: param,
+        timeout: 10000,
+        headers: {
+          'content-Type': 'application/x-www-form-urlencoded'
         }
       })
+      console.log('data', res)
       if (res.data) {
         commit(types.SET_SEND_RES, {show: true, type: 'success', info: '寄件成功'})
         await dispatch('setSend')
@@ -200,11 +218,15 @@ export const actions = {
   },
   async setSingleSend ({commit}, {id}) {
     try {
-      const res = await instance.get(sendApi.index, {
-        params: {id}
+      const res = await request({
+        url: sendApi.index,
+        method: 'parampost',
+        paramkey: 'param',
+        data: JSON.stringify({id})
       })
-      if (res.status === 200) {
-        let data = res.data[0]
+      console.log('setSingleSend res', res)
+      if (res.code === 200) {
+        let data = res.obj[0]
         commit(types.SET_QR_SEND, {data})
         return {
           text: '获取寄件信息成功',

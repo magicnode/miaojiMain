@@ -3,11 +3,13 @@
     <div class="addaddress-container">
       <group>
          <x-input @on-focus="fixBtn" @on-blur="removeFixBtn" title="姓名" v-model="name" :max="20" placeholder="请填写您的真实姓名" required></x-input>
-         <x-input @on-focus="fixBtn" @on-blur="removeFixBtn" title="电话" v-model="mobile" placeholder="请输入手机号" required></x-input>
+         <x-input @on-focus="fixBtn" @on-blur="removeFixBtn" title="手机" v-model="mobile" placeholder="手机、座机不可同时为空"></x-input>
+         <x-input @on-focus="fixBtn" @on-blur="removeFixBtn" title="座机" v-model="tel" placeholder="手机、座机不可同时为空"></x-input>
          <x-address @on-focus="fixBtn" @on-blur="removeFixBtn" v-if="pagetype === 'add'" class="quyu" required title="地区" v-model="location" :list="addressData" placeholder="请选择省市区"></x-address>
          <x-address class="quyu" v-if="pagetype === 'edit'" required title="地区" raw-value v-model="location" :list="addressData" placeholder="请选择省市区"></x-address>
          <x-textarea @on-focus="fixBtn" @on-blur="removeFixBtn" type="text" title="地址" :max="80" placeholder="请详细到门牌号 (限80字)" :show-counter="false" v-model="address" :rows="1" :height="address.length + 22" required>
          </x-textarea>
+         <x-input @on-focus="fixBtn" @on-blur="removeFixBtn" title="邮编" v-model="postcode" placeholder="请输入邮编"></x-input>
        </group>
        <group>
          <x-switch title="设为默认地址" class="mj-switch" v-model="value"></x-switch>
@@ -58,6 +60,8 @@ export default {
       addressData: ChinaAddressV3Data,
       name: '',
       mobile: '',
+      tel: '',
+      postcode: '',
       location: [],
       address: '',
       value: false

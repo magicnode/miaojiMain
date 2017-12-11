@@ -5,7 +5,8 @@
       <div class="senditem-box">
         <span class="senditem-box__office">
          <span class="senditem-box__office--info">
-          寄件站点: {{item.office | officeinfo}}
+          寄件站点: {{item.officeName}}
+          <!-- 快递品牌: {{item.brand ? item.brand : '暂未选择'}} -->
          </span>
          <img src="../assets/images/new/pic_ico_map.png" alt="item.office.descript" @click="watchOffice(item.officeId)">
         </span>
@@ -15,8 +16,8 @@
           收
         </div>
         <div class="senditem-box__address">
-          <p>{{item.receiptAddress ? item.receiptAddress.name : ''}}  {{item.receiptAddress ? item.receiptAddress.mobile : ''}}</p>
-          <p class="senditem-box__address--detail">{{item.receiptAddress ? item.receiptAddress.province + item.receiptAddress.city + item.receiptAddress.district + item.receiptAddress.address : ''}}</p>
+          <p>{{item.reciveName}}  {{item.reciveMobile}}</p>
+          <p class="senditem-box__address--detail">{{item.reciveProvince + item.reciveCity + item.reciveDistrict + item.reciveAddress}}</p>
         </div>
         <span class="senditem-box__state">{{item.type | sendstatus}}</span>
       </div>
@@ -35,7 +36,7 @@
       <div class="senditem-box">
         <span class="senditem-box__office">
          <span class="senditem-box__office--info">
-          寄件站点: {{item.office | officeinfo}}
+          寄件站点: {{item.officeName}}
          </span>
          <img src="../assets/images/new/pic_ico_map.png" alt="item.office.descript" @click="watchOffice(item.officeId)">
         </span>
@@ -45,8 +46,8 @@
           收
         </div>
         <div class="senditem-box__address">
-          <p>{{item.receiptAddress ? item.receiptAddress.name : ''}}  {{item.receiptAddress ? item.receiptAddress.mobile : ''}}</p>
-          <p class="senditem-box__address--detail">{{item.receiptAddress ? item.receiptAddress.province + item.receiptAddress.city + item.receiptAddress.district + item.receiptAddress.address : ''}}</p>
+          <p>{{item.reciveName}}  {{item.reciveMobile}}</p>
+          <p class="senditem-box__address--detail">{{item.reciveProvince + item.reciveCity + item.reciveDistrict + item.reciveAddress}}</p>
         </div>
         <span class="senditem-box__state">{{item.type | sendstatus}}</span>
       </div>

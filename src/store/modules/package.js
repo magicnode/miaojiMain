@@ -1,5 +1,6 @@
 import {pickup as pickupApi, send as sendApi} from '@/api'
 import axios from 'axios'
+import request from '@/util/request'
 
 import * as types from '../mutation-types'
 
@@ -100,11 +101,14 @@ export const actions = {
   },
   async initPackageSend ({ commit }, {query = {mobile: '', page: 1, rows: 5}}) {
     try {
-      const res = await instance.get(sendApi.index, {
-        params: {userId: local.getItem('mj_userId')}
+      const res = await request({
+        url: sendApi.index,
+        method: 'parampost',
+        paramkey: 'param',
+        data: JSON.stringify({userId: local.getItem('mj_userId')})
       })
-      if (res.status === 200) {
-        const data = res.data
+      if (res.code === 200) {
+        const data = res.obj
         commit(types.SET_PACKAGE_SEND, {data, query})
         return {
           text: '获取寄件成功',
@@ -125,11 +129,14 @@ export const actions = {
   },
   async addPackageSend ({ commit }, {query = {mobile: '', page: 1, rows: 5}}) {
     try {
-      const res = await instance.get(sendApi.index, {
-        params: {userId: local.getItem('mj_userId')}
+      const res = await request({
+        url: sendApi.index,
+        method: 'parampost',
+        paramkey: 'param',
+        data: JSON.stringify({userId: local.getItem('mj_userId')})
       })
-      if (res.status === 200) {
-        let data = res.data
+      if (res.code === 200) {
+        let data = res.obj
         commit(types.SET_PACKAGE_SEND, {data, query})
         return {
           text: '获取寄件成功',

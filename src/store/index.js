@@ -47,7 +47,10 @@ const store = new Vuex.Store({
           params: {id}
         })
         if (result.data) {
-          result.data.push('空')
+          result.data.push({
+            brand: '空',
+            brandId: null
+          })
           commit('SET_BRAND', {brand: result.data})
           return {
             text: '获取快递品牌成功',
