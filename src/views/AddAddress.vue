@@ -163,29 +163,10 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="less" scoped>
 @import '../assets/styles/colors.less';
-@import '../assets/styles/helpers.less';
 .addaddress {
   min-height: 100vh;
   background-color: @bg-grey;
   &-container {
-    .weui-cell__bd.weui-cell__primary {
-      input {
-        text-align: right;
-      }
-    }
-    .quyu {
-      font-size: 1.5rem;
-      .weui-label {
-        text-align: left;
-        padding-left: .6rem;
-      }
-      .vux-popup-picker-select {
-        color: #666;
-        span {
-          font-size: 1.5rem;
-        }
-      }
-    }
     &-add {
       margin-top: 10rem;
       padding: 1rem 1rem;

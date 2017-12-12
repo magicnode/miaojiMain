@@ -6,7 +6,7 @@ import * as types from '../mutation-types'
 
 let local = window.localStorage
 let instance = axios.create({
-  timeout: 3000
+  timeout: 6000
 })
 
 export const state = {
@@ -141,14 +141,16 @@ export const actions = {
         let result = {
           show: true,
           type: 'success',
-          info: '修改默认地址成功'
+          info: '修改默认地址成功',
+          width: '20rem'
         }
         commit(types.SET_ADDRESS_RES, {result})
       } else {
         let result = {
           show: true,
           type: 'warn',
-          info: '修改默认地址失败'
+          info: '修改默认地址失败',
+          width: '20rem'
         }
         commit(types.SET_ADDRESS_RES, {result})
       }
@@ -159,7 +161,7 @@ export const actions = {
         show: true,
         type: 'warn',
         info: '修改默认地址失败',
-        width: '16rem'
+        width: '20rem'
       }
       commit(types.SET_ADDRESS_RES, {result})
     })

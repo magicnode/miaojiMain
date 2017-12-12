@@ -199,7 +199,7 @@ export default {
         // 定位成功后在 当前位置上打上标记
         const selfPosition = data.position
         let mymarker = new window.AMap.Marker({
-          icon: 'http://7xqh0b.com1.z0.glb.clouddn.com/biaoji2.png',
+          icon: 'http://oxou6bzgv.bkt.clouddn.com/marker_19x23.png',
           title: '我的位置',
           position: [selfPosition.lng, selfPosition.lat]
         })
@@ -211,14 +211,18 @@ export default {
         console.log('定位失败')
       })
       window.AMap.event.addListener(mapObj, 'dragend', function () {
-        setTimeout(function () {
+        clearTimeout(this.dragendFunc)
+        this.dragendFunc = setTimeout(function () {
+          console.log('start drag')
           getBounds()
-        }, 1000)
+        }, 1100)
       })
       window.AMap.event.addListener(mapObj, 'zoomend', function () {
-        setTimeout(function () {
+        clearTimeout(this.zoomendFunc)
+        this.zoomendFunc = setTimeout(function () {
+          console.log('start zoomend')
           getBounds()
-        }, 1000)
+        }, 1100)
       })
     })
   },
@@ -232,6 +236,8 @@ export default {
   },
   data () {
     return {
+      dragendFunc: '',
+      zoomendFunc: ''
     }
   },
   methods: {
@@ -242,9 +248,10 @@ export default {
 }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="less">
+<style scoped lang="less">
 @import '../assets/styles/colors.less';
 @import '../assets/styles/helpers.less';
+
 .amap-ui-smp-ifwn-container {
   max-width: 22rem;
   span {
@@ -259,23 +266,6 @@ export default {
   @media (min-width:400px) {
     max-width: 47rem;
   }
-}
-.normal-btn {
-  width: 5.6rem;
-  font-size: 1.4rem;
-  text-align: center;
-  padding: .2rem .2rem;
-  border-radius: 5px;
-  box-sizing: border-box;
-  white-space: nowrap;
-}
-
-.confirm-btn {
-  .normal-btn;
-  float: right;
-  color: white;
-  border: none;
-  background: @dark-yellow;
 }
 
 .confirm-p {

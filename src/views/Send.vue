@@ -96,15 +96,18 @@ export default {
     this.describe = window.localStorage.getItem('mj_send_describe')
     this.note = window.localStorage.getItem('mj_send_note')
     this.initBrand({id: addressInfo ? addressInfo.userId : 0})
-    console.log('brand', this.brand)
   },
   mounted () {
     window.document.title = '到点寄件'
   },
   beforeDestroy () {
-    // 离开本页面时，要移除footer class中的hide
-    const footer = window.document.getElementsByTagName('footer')[0]
-    footer.className = footer.className.replace(/hide/g, '')
+    try {
+      // 离开本页面时，要移除footer class中的hide
+      const footer = window.document.getElementsByTagName('footer')[0]
+      footer.className = footer.className.replace(/hide/g, '')
+    } catch (e) {
+      console.error(e)
+    }
   },
   computed: {
     ...mapGetters({

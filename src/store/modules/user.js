@@ -4,7 +4,7 @@ import * as types from '../mutation-types'
 import window from 'window'
 
 let instance = axios.create({
-  timeout: 5000
+  timeout: 6000
 })
 /**
  * [state description]

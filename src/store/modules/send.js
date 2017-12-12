@@ -7,7 +7,7 @@ import * as types from '../mutation-types'
 
 let local = window.localStorage
 let instance = axios.create({
-  timeout: 5000
+  timeout: 6000
 })
 
 export const state = {
@@ -150,7 +150,7 @@ export const actions = {
     try {
       let paramData = {
         order,
-        brand,
+        brandId: brand,
         describe,
         note,
         officeId: office,

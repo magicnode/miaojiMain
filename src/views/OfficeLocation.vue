@@ -95,7 +95,7 @@ function Navigation (position, map, walking) {
       selfPosition = data.position
       // 定位成功后在 当前位置上打上标记
       let mymarker = new window.AMap.Marker({
-        icon: 'http://7xqh0b.com1.z0.glb.clouddn.com/biaoji2.png',
+        icon: 'http://oxou6bzgv.bkt.clouddn.com/marker_19x23.png',
         title: '我的位置',
         position: [selfPosition.lng, selfPosition.lat]
       })
@@ -216,98 +216,7 @@ export default {
 }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="less">
+<style scoped lang="less">
 @import '../assets/styles/colors.less';
-.amap-ui-smp-ifwn-container {
-  font-size: 1.4rem;
-}
 
-.amap-ui-smp-ifwn-def-tr-close {
-  font-size: 2.2rem;
-}
-
-.office-detail {
-  padding-top: .2rem;
-  &__more {
-    float: right;
-  }
-  &__content {
-    transition: all .2s ease;;
-    padding-top: 1rem;
-  }
-}
-
-.contenthide {
-  transform: scale(0);
-  height: 0;
-}
-
-.first-line {
-  span.more{
-    float: right;
-    width: 0;
-    height: 0;
-    border-width: 1.7rem .8rem 0;
-    border-style: solid;
-    border-color: @dark-yellow transparent transparent;
-    margin: 0.2rem .1rem;
-    position: relative;
-    transition: transform .6s;
-    span{
-    }
-  }
-}
-
-.navigation-btn {
-  width: 4.6rem;
-  font-size: 1.4rem;
-  text-align: center;
-  padding: .2rem .4rem;
-  border-radius: 5px;
-  box-sizing: border-box;
-  white-space: nowrap;
-  color: white;
-  border: none;
-  background: @dark-yellow;
-}
-
-#panel {
-  top: 15px;
-  z-index: 999;
-  position: absolute;
-  background-color: white;
-  max-height: 100%;
-  overflow-y: auto;
-  right: 14px;
-  width: 282px;
-}
-
-.upside {
-  transform: rotateZ(180deg);
-}
-
-.h2rem {
-  height: 2rem;
-  overflow: hidden;
-}
-
-.hauto {
-  height: auto;
-}
-
-.pull-brand {
-  span.more{
-    float: right;
-    width: 0;
-    height: 0;
-    border-width: 1.3rem 0.6rem 0;
-    border-style: solid;
-    border-color: @dark-yellow transparent transparent;
-    margin: 0.2rem .1rem;
-    position: relative;
-    transition: transform .6s;
-    span{
-    }
-  }
-}
 </style>

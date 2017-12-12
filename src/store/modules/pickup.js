@@ -4,7 +4,7 @@ import axios from 'axios'
 import * as types from '../mutation-types'
 
 let instance = axios.create({
-  timeout: 3000
+  timeout: 6000
 })
 
 export const state = {

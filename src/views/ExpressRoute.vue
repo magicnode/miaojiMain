@@ -61,6 +61,9 @@ export default {
     ...mapActions([
       'setExpressRoute'
     ])
+  },
+  beforeDestroy () {
+    this.$vux.loading.hide()
   }
 }
 </script>

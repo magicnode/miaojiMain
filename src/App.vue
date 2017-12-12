@@ -45,6 +45,7 @@ export default {
 <style lang="less">
 @import '~vux/src/styles/reset.less';
 @import './assets/styles/colors.less';
+@import './assets/styles/helpers.less';
 
 html,body{
   font-size: 10px;

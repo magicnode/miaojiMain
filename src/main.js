@@ -95,7 +95,7 @@ Object.keys(filters).forEach(key => {
 })
 
 /* eslint-disable no-new */
-new Vue({
+window.wxvue = new Vue({
   router,
   store,
   render: h => h(App)

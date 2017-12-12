@@ -91,7 +91,8 @@ export default {
       if (this.result['show'] === true) {
         this.$vux.toast.show({
           text: this.result['info'],
-          type: this.result['type']
+          type: this.result['type'],
+          width: this.result['width'] || '18rem'
         })
       }
     },
