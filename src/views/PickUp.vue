@@ -46,6 +46,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { Divider, XSwitch, Spinner } from 'vux'
+import {storage} from '@/util'
 
 export default {
   name: 'pickup',
@@ -56,7 +57,10 @@ export default {
   },
   async created () {
     const {type} = this.$route.query
-    const localtype = window.localStorage.getItem('mj_pickup_page_switch_type')
+    const localtype = storage({
+      type: 'get',
+      key: 'pickup_page_switch_type'
+    })
     this.pageType = type || localtype || 'wait'
     this.$store.commit('SET_PAGE', {page: 'pickup'})
   },
@@ -99,7 +103,11 @@ export default {
       'setUserInfo'
     ]),
     changeShow (type) {
-      window.localStorage.setItem('mj_pickup_page_switch_type', type)
+      storage({
+        type: 'set',
+        key: 'pickup_page_switch_type',
+        val: type
+      })
       this.pageType = type
       this.scrollBy()
     },
@@ -179,13 +187,27 @@ export default {
       })
     },
     saveScrollTop () {
-      window.localStorage.setItem('mj_pickup_page_wait_scroll_top', this.$refs.my_scroller_1.getPosition().top)
-      window.localStorage.setItem('mj_pickup_page_sign_scroll_top', this.$refs.my_scroller_2.getPosition().top)
+      storage({
+        type: 'set',
+        key: 'pickup_page_wait_scroll_top',
+        val: this.$refs.my_scroller_1.getPosition().top
+      })
+      storage({
+        type: 'set',
+        key: 'pickup_page_sign_scroll_top',
+        val: this.$refs.my_scroller_2.getPosition().top
+      })
     },
     scrollBy () {
       const _this = this
-      const top1 = window.localStorage.getItem('mj_pickup_page_wait_scroll_top')
-      const top2 = window.localStorage.getItem('mj_pickup_page_sign_scroll_top')
+      const top1 = storage({
+        type: 'get',
+        key: 'pickup_page_wait_scroll_top'
+      })
+      const top2 = storage({
+        type: 'get',
+        key: 'mj_pickup_page_sign_scroll_top'
+      })
       setTimeout(function () {
         _this.$refs.my_scroller_1.scrollBy(0, top1, true)
         _this.$refs.my_scroller_2.scrollBy(0, top2, true)

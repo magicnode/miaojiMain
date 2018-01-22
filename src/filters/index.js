@@ -3,13 +3,16 @@ export const addOne = function (num) {
 }
 
 export const sendstatus = function (val) {
-  // 状态1.等待接单，2.中转中，3.已派送，4.已签收 5. 已取消
+  // 1.等待接单，2.中转中，3.已派送，4.已签收，5.取消订单 6已过期 7 站点拒绝接单 8待支付
   const sendsta = {
-    1: '待寄件',
+    1: '待接单',
     2: '中转中',
     3: '已派送',
     4: '已签收',
-    5: '已取消'
+    5: '已取消',
+    6: '已过期',
+    7: '站点拒绝接单',
+    8: '待付款'
   }
   return sendsta[val]
 }

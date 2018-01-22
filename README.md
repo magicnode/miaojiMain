@@ -3,6 +3,8 @@
 
 > A Vue.js project
 
+Let's Encrypt
+
 ## Build Setup
 
 ``` bash

@@ -53,7 +53,7 @@ const fetch = (options) => {
         url,
         method: 'post',
         data: param,
-        timeout: 8000,
+        timeout: 15000,
         headers: {
           'content-Type': 'application/x-www-form-urlencoded'
         }

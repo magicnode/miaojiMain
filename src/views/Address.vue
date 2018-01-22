@@ -18,7 +18,7 @@
           <div class="address-container-list__item" v-for="item in data[addressType]" :key="item.id">
               <div class="flex address-container-list__item--info" @click="selectAddress(item)">
                 <div>
-                  <p>{{item.name + '  '}} {{item.mobile}}</p>
+                  <p>{{item.name + '  '}}{{item.mobile}}  {{item.tel}}</p>
                   <p class="location">{{item.district + item.address}}</p>
                 </div>
                <img v-show="!pick" src="../assets/images/add_ico_del.png" alt="" @click="deleteItem(item.id)">
@@ -48,16 +48,20 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import {storage} from '@/util'
 
 export default {
-  name: 'address',
+  name: 'mjaddress',
   created () {
     this.changeAddress()
     if (this.result['type'] === 'warn') {
       this.showToast()
     }
     const {type, pick} = this.$route.query
-    const localtype = window.localStorage.getItem('mj_address_page_switch_type')
+    const localtype = storage({
+      type: 'get',
+      key: 'address_page_switch_type'
+    })
     this.addressType = type || localtype || 'send'
     this.pick = pick === '1'
   },
@@ -81,9 +85,6 @@ export default {
     goPath (path, query, plus) {
       if (plus) {
         Object.assign(query, plus)
-        // Object.keys(plus).forEach(key => {
-        //   query[key] = plus[key]
-        // })
       }
       this.$router.push({path, query})
     },
@@ -111,7 +112,11 @@ export default {
       this.$router.go(-1)
     },
     changeShow (type) {
-      window.localStorage.setItem('mj_address_page_switch_type', type)
+      storage({
+        type: 'set',
+        key: 'address_page_switch_type',
+        val: type
+      })
       this.addressType = type
     },
     ...mapActions([

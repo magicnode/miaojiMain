@@ -3,32 +3,29 @@
     <div class="senddetail-container">
       <div class="senddetail-container-tab">
         <tab active-color='#ff750f'>
-          <tab-item :selected="show ==='wait'" @on-item-click="changeShow('wait')">待寄件</tab-item>
-          <tab-item :selected="show ==='ready'" @on-item-click="changeShow('ready')">已寄件</tab-item>
+          <tab-item
+            v-for="item in showList" 
+            :selected="show === item['type']"
+            :key="item['type']"
+            @on-item-click="changeShow(item)">
+            {{item['cnName']}}
+          </tab-item>
         </tab>
       </div>
-      <div class="senddetail-cell" v-show="show === 'wait'">
-        <scroller 
+
+      <div class="senddetail-cell">
+        <scroller
           :on-refresh="refresh"
           :on-infinite="infinite"
           ref="my_scroller_senddetail"
           class="senddetail-scroller">
           <mj-spinner type="line" slot="refresh-spinner"></mj-spinner>
-          <div class="senddetail-cell-detail" v-for="item in data['wait']" :key="item.id">
-            <mj-senditem :item="item"></mj-senditem>
-          </div>
-          <mj-spinner type="circle" slot="infinite-spinner"></mj-spinner>
-        </scroller>
-      </div>
-      <!-- 已寄件 -->
-      <div class="senddetail-cell" v-show="show === 'ready'">
-        <scroller 
-          :on-refresh="refresh"
-          :on-infinite="infinite"
-          ref="my_scroller_senddetail"
-          class="senddetail-scroller">
-          <mj-spinner type="line" slot="refresh-spinner"></mj-spinner>
-          <div class="senddetail-cell-detail" v-for="item in data['ready']" :key="item.id">
+          <div 
+            class="senddetail-cell-detail" 
+            v-for="item in data['list']" 
+            :key="item.id"
+            v-show="handleIsShow(item.type)"
+          >
             <mj-senditem :item="item"></mj-senditem>
           </div>
           <mj-spinner type="circle" slot="infinite-spinner"></mj-spinner>
@@ -39,12 +36,16 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { storage } from '@/util'
 
 export default {
   name: 'senddetail',
   created () {
     const {type} = this.$route.query
-    const localtype = window.localStorage.getItem('mj_senddetail_switch_type')
+    const localtype = storage({
+      type: 'get',
+      key: 'senddetail_switch_type'
+    })
     this.show = type || localtype || 'wait'
   },
   mounted () {
@@ -58,7 +59,26 @@ export default {
   },
   data () {
     return {
-      show: 'wait'
+      show: 'wait',
+      showList: [{
+        type: 'all',
+        cnName: '全部'
+      }, {
+        type: 'wait',
+        cnName: '待寄件'
+      }, {
+        type: 'ready',
+        cnName: '待收货'
+      }, {
+        type: 'cancle',
+        cnName: '已完成'
+      }],
+      typeShowList: {
+        'all': [],
+        'wait': [1, 8],
+        'ready': [2, 3],
+        'cancle': [4]
+      }
     }
   },
   methods: {
@@ -66,9 +86,26 @@ export default {
       'setSend',
       'cancleSend'
     ]),
-    changeShow (type) {
-      window.localStorage.setItem('mj_senddetail_switch_type', type)
-      this.show = type
+    changeShow (item) {
+      storage({
+        type: 'set',
+        key: 'senddetail_switch_type',
+        val: item.type
+      })
+      this.show = item.type
+    },
+    handleIsShow (type) {
+      const isShowList = this.typeShowList[this.show]
+      if (type === 5) {
+        return false
+      }
+      if (isShowList.length === 0) {
+        return true
+      }
+      if (isShowList.indexOf(Number(type)) !== -1) {
+        return true
+      }
+      return false
     },
     showToast (data) {
       this.$vux.toast.show({
@@ -132,6 +169,8 @@ export default {
         done(true)
       }, 1500)
     }
+  },
+  watch: {
   }
 }
 </script>

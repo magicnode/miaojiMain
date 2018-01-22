@@ -2,14 +2,22 @@
   <div class="sendqr">
     <div class="container">
       <div class="sendqr-img">
-        <router-link :to="{path: '/express/route', query: {orderSn: data.order, brand: data.brandId}}" class="express-router__link" v-show="data.type !== 1">查看路由</router-link>
+        <router-link :to="{path: '/express/route', query: {orderSn: data.order, brand: data.brandId}}" class="express-router__link" v-show="data.type === 2">查看路由</router-link>
         <div class="sendqr-img--wait" v-show="data.type === 1">
           <img :src="qr" />
           <p>寄件时，请向店员出示此二维码</p>
         </div>
-        <div class="sendqr-img--sign" v-show="data.type !== 1">
+        <div class="sendqr-img--sign" v-show="data.type === 2">
           <img src="../assets/images/new/rec_ico_rig.png" />
           <p>快递已经寄出</p>
+        </div>
+        <div class="sendqr-img--sign" v-show="data.type === 8">
+          <img src="../assets/images/daipay.png" @click.stop="wxPay" />
+          <p>点击下方付款按钮付款</p>
+        </div>
+        <div class="sendqr-img--sign" v-show="data.type === 7">
+          <img src="../assets/images/refused_package.png" />
+          <p>{{data.reason || '站点拒绝接单'}}</p>
         </div>
       </div>
       <div class="sendqr-detail">
@@ -18,7 +26,7 @@
             <span class="bgblue">寄</span>
           </div>
           <div class="sendqr-detail-box__detail">
-            <p>{{data.sendName + '   ' + data.sendMobile}}</p>
+            <p>{{data.sendName + '   ' + data.sendMobile}}  {{data.sendTel}}</p>
             <p>{{data.sendProvince + data.sendDistrict + data.sendAddress}}</p>
           </div>
         </div>
@@ -27,7 +35,7 @@
             <span class="bgyellow">收</span>
           </div>
           <div class="sendqr-detail-box__detail">
-            <p>{{data.reciveName + '   ' + data.reciveMobile}}</p>
+            <p>{{data.reciveName + '   ' + data.reciveMobile}}  {{data.reciveTel}}</p>
             <p>{{data.reciveProvince + data.reciveDistrict + data.reciveAddress}}</p>
           </div>
         </div>
@@ -65,7 +73,11 @@
         <div class="sendqr-detail-box" v-show="data.price">
           <span class="sendqr-detail-box__title">支付金额</span>
           <span class="sendqr-detail-box__yin">:</span>
-          <span class="sendqr-detail-box__content">{{'￥' +data.price}}</span>
+          <span class="sendqr-detail-box__content">
+            {{'￥' + data.price}}
+            <button class="pay" @click.stop="wxPay" v-show="data.type === 8">立即付款</button>
+            <span class="pay" v-show="data.type !== 8">支付完成</span>
+          </span>
         </div>
       </div>
     </div>
@@ -74,20 +86,37 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import {pic as picApi} from '@/api'
+import {storage} from '@/util'
+import * as wxUtil from '@/util/wx'
 
 export default {
   name: 'sendqr',
   async created () {
-    let query = this.$route.query
-    let id = query.id || ''
-    this.qr = picApi.qr + '?orderSn=' + '' + '&userId=' + id
-    const result = await this.setSingleSend({id})
-    if (result.type !== 'success') {
-      this.$vux.toast.show(result)
+    try {
+      this.$vux.loading.show({text: ' '})
+      let query = this.$route.query
+      let id = query.id || ''
+      this.id = id
+      this.qr = picApi.qr + '?orderSn=' + '' + '&userId=' + id
+      const result = await this.setSingleSend({id})
+      if (result.type !== 'success') {
+        this.$vux.toast.show(result)
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      this.$vux.loading.hide()
     }
   },
-  mounted () {
+  async mounted () {
     window.document.title = '寄件明细'
+    await wxUtil.init()
+    window.wx.ready(function () {
+      console.log('微信jssdk初始化成功')
+    })
+    window.wx.error(function (res) {
+      console.log('res', res)
+    })
   },
   computed: {
     ...mapGetters({
@@ -97,6 +126,7 @@ export default {
   data () {
     return {
       qr: '',
+      id: '',
       order: '',
       item: {},
       sendAddress: {},
@@ -109,6 +139,41 @@ export default {
     ]),
     watchOffice (userId) {
       this.$router.push({path: '/office/location', query: {userId}})
+    },
+    async wxPay () {
+      const orderSn = this.data.order
+      // const orderSn = '15008555555555'
+      const money = this.data.price
+      if (Number(money) === 0) {
+        this.$vux.toast.show({
+          text: '正在定价中，定价结束后会有微信模板消息通知',
+          type: 'text',
+          width: '22rem',
+          time: 2500
+        })
+        return
+      }
+      let params = {
+        id: this.id,
+        openid: storage({key: 'openid'}),
+        orderSn,
+        total_fee: money,
+        body: '妙寄快递包裹'
+      }
+      try {
+        const wxPayRes = await wxUtil.pay(params)
+        this.$vux.toast.show(wxPayRes)
+      } catch (e) {
+        console.error(e)
+        this.$vux.toast.show(e)
+      } finally {
+        const _this = this
+        const id = this.id
+        setTimeout(function () {
+          _this.setSingleSend({id})
+          window.location.reload()
+        }, 800)
+      }
     }
   }
 }
@@ -130,6 +195,16 @@ export default {
 .lightyellow {
   color: @red!important;
 }
+
+button.pay {
+  background: transparent;
+  font-size: 1.4rem;
+  padding: 1px 5px;
+  border: 1px solid @dark-yellow;
+  border-radius: 3px;
+  color: @dark-yellow;
+}
+
 .sendqr {
   .container {
   }

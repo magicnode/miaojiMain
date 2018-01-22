@@ -1,10 +1,9 @@
 import {address as addressApi} from '@/api'
 import axios from 'axios'
-import window from 'window'
+import {storage} from '@/util'
 
 import * as types from '../mutation-types'
 
-let local = window.localStorage
 let instance = axios.create({
   timeout: 6000
 })
@@ -30,7 +29,7 @@ export const getters = {
 export const actions = {
   changeAddress ({ commit }) {
     instance.get(addressApi.index, {
-      params: {userId: local.getItem('mj_userId')}
+      params: {userId: storage({key: 'userId'})}
     })
     .then((res) => {
       if (res.status === 200) {
@@ -90,14 +89,34 @@ export const actions = {
       console.error(err)
     })
   },
-  async addAddress ({commit, dispatch}, {address, province, city, district, mobile, name, checked = 2, userId = local.getItem('mj_userId'), addressType = 1}) {
+  async addAddress ({commit, dispatch}, {
+    address,
+    province,
+    city,
+    district,
+    mobile,
+    tel,
+    name,
+    checked = 2,
+    userId = storage({key: 'userId'}),
+    addressType = 1}) {
     try {
+      let params = {
+        address,
+        province,
+        city,
+        district,
+        mobile,
+        name,
+        checked,
+        userId,
+        addressType,
+        tel
+      }
       const res = await instance({
         method: 'post',
         url: addressApi.add,
-        params: {
-          address, province, city, district, mobile, name, checked, userId, addressType
-        }
+        params
       })
       if (res.status === 200) {
         dispatch('changeAddress')
@@ -117,9 +136,32 @@ export const actions = {
       commit(types.SET_ADDRESS_RES, {result})
     }
   },
-  eidtAddress ({dispatch}, {id, address, province, city, district, mobile, name, checked = 2, userId = local.getItem('mj_userId'), addressType = 1}) {
+  eidtAddress ({dispatch}, {
+    id,
+    address,
+    province,
+    city,
+    district,
+    mobile,
+    tel,
+    name,
+    checked = 2,
+    userId = storage({key: 'userId'}),
+    addressType = 1}) {
     instance.get(addressApi.update, {
-      params: {id, address, province, city, district, mobile, name, checked, userId, addressType}
+      params: {
+        id,
+        address,
+        province,
+        city,
+        district,
+        mobile,
+        tel,
+        name,
+        checked,
+        userId,
+        addressType
+      }
     })
     .then((res) => {
       if (res.status === 200) {
@@ -132,7 +174,7 @@ export const actions = {
   },
   checkedAddress ({commit, dispatch}, {id, addressType}) {
     instance.get(addressApi.checked, {
-      params: {id, addressType, userId: local.getItem('mj_userId')}
+      params: {id, addressType, userId: storage({key: 'userId'})}
     })
     .then((res) => {
       console.log('res url', res.request.responseURL)

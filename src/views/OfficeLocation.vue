@@ -7,7 +7,7 @@
 </template>
 <script>
 import {address as addressApi, brand as brandApi} from '@/api'
-import pic from '../assets/images/new/officedefault.png'
+import pic from '../assets/images/new/officedefault.jpg'
 
 const setOfficeMaker = function ({position, info, error, brand}) {
   let map = new window.AMap.Map('iCenter', {
@@ -45,7 +45,7 @@ const setOfficeMaker = function ({position, info, error, brand}) {
     // 给导航按钮添加事件, more按钮添加高度控制点击事件
     setTimeout(function () {
       const navBtn = window.document.getElementsByClassName('navigation-btn')[0]
-      navBtn.addEventListener('click', function (event) {
+      navBtn.addEventListener('touchstart', function (event) {
         event.stopPropagation()
         closeInfoWin()
         Navigation(position, map, walking)
@@ -53,7 +53,7 @@ const setOfficeMaker = function ({position, info, error, brand}) {
       const detailmore = window.document.getElementsByClassName('office-detail__more')[0]
       const more = window.document.getElementsByClassName('more')[0]
       const contentDiv = window.document.getElementsByClassName('office-detail__content')[0]
-      detailmore.addEventListener('click', function (event) {
+      detailmore.addEventListener('touchstart', function (event) {
         event.stopPropagation()
         const oldName = more.className
         const oldBrandName = contentDiv.className
@@ -120,7 +120,7 @@ export default {
   created () {
   },
   async mounted () {
-    window.document.title = '"妙寄"全网站点地图'
+    window.document.title = '"妙寄"站点地图'
     const {userId} = this.$route.query
     if (!userId) {
       this.$vux.toast.show({

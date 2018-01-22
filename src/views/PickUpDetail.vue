@@ -71,13 +71,17 @@
 </template>
 <script>
 import {pic as picApi, address as addressApi} from '@/api'
+import {storage} from '@/util'
 
 export default {
   name: 'pickupdetail',
   async created () {
     const query = this.$route.query
     const userId = query.userId
-    this.qr = picApi.pickupqr + '?orderSn=' + query.orderSn + '&userId=' + userId || window.localStorage.getItem('mj_userId')
+    this.qr = picApi.pickupqr + '?orderSn=' + query.orderSn + '&userId=' + userId || storage({
+      type: 'get',
+      key: 'userId'
+    })
     this.query = query
     const office = await this.$http.post(addressApi.officelocation + '?userId=' + query.userId)
     this.state = query.state || '101'

@@ -17,7 +17,7 @@
 import window from 'window'
 
 export default {
-  name: 'header',
+  name: 'mjheader',
   props: {
     title: {
       type: String,

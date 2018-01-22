@@ -2,7 +2,7 @@
   <div class="bind">
      <div class="bind-container">
        <div class="logo">
-          <img src="../assets/images/new/bin_log.png" alt="妙寄图标">
+          <img src="../assets/images/new/logo.png" alt="妙寄图标">
        </div>
        <div class="input mobile">
          <div>
@@ -157,22 +157,10 @@ export default {
         return
       } else if (userinfo.type === 'success') {
         // 获取用户信息成功, 根据page跳转页面
-        let {page} = this.$route.query
-        const _this = this
-        switch (page) {
-          case 1:
-            _this.$router.push({path: '/pickup'})
-            break
-          case 2:
-            _this.$router.push({path: '/send'})
-            break
-          case 3:
-            _this.$router.push({path: '/usercenter'})
-            break
-          default:
-            _this.$router.push({path: '/usercenter'})
-            break
-        }
+        let {path} = this.$route.query
+        this.$router.push({
+          path: path || '/usercenter'
+        })
       } else {
         this.$vux.toast.show(userinfo)
         return

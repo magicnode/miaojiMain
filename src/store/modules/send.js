@@ -1,11 +1,10 @@
-import {send as sendApi, address as addressApi} from '@/api'
-import request from '@/util/request'
 import axios from 'axios'
-import window from 'window'
+import {send as sendApi, address as addressApi} from '@/api'
+import {storage} from '@/util'
+import request from '@/util/request'
 
 import * as types from '../mutation-types'
 
-let local = window.localStorage
 let instance = axios.create({
   timeout: 6000
 })
@@ -13,8 +12,7 @@ let instance = axios.create({
 export const state = {
   data: {
     init: false,
-    wait: [],
-    data: []
+    list: []
   },
   query: {
   },
@@ -69,34 +67,20 @@ export const getters = {
 export const actions = {
   async setSend ({ commit }) {
     try {
+      const userId = storage({
+        type: 'get',
+        key: 'userId'
+      })
       const res = await request({
         url: sendApi.index,
         method: 'parampost',
         paramkey: 'param',
-        data: JSON.stringify({userId: local.getItem('mj_userId')})
+        data: JSON.stringify({userId: userId})
       })
-      console.log('res', res)
       if (res.code === 200) {
         let resdata = res.obj
         let data = {}
-        let wait = []
-        let ready = []
-        for (let i = 0, len = resdata.length; i < len; i++) {
-          let item = resdata[i]
-          if (item.type === 1) {
-            wait.push(item)
-          } else if (item.type !== 1 && item.type !== 5) {
-            ready.push(item)
-          }
-        }
-        // wait.sort(function (a, b) {
-        //   return b.createTime - a.createTime
-        // })
-        // ready.sort(function (a, b) {
-        //   return b.createTime - a.createTime
-        // })
-        data.wait = wait
-        data.ready = ready
+        data.list = resdata
         data.init = true
         commit(types.SET_SEND, {data})
         return {
@@ -124,8 +108,12 @@ export const actions = {
   },
   async setDefaultAddress ({commit}) {
     try {
+      const userId = storage({
+        type: 'get',
+        key: 'userId'
+      })
       const {data} = await instance.get(addressApi.default, {
-        params: {userId: local.getItem('mj_userId')}
+        params: {userId}
       })
       commit(types.SET_SEND_DEFAULTADDRESS, {sendAddress: data.SendAddress, pickupAddress: data.receiptAddress})
     } catch (err) {
@@ -150,17 +138,19 @@ export const actions = {
     try {
       let paramData = {
         order,
-        brandId: brand,
         describe,
         note,
         officeId: office,
         receiptAddressId,
         sendAddressId,
         type,
-        userId: local.getItem('mj_userId'),
-        sendType: 2
+        userId: storage({type: 'get', key: 'userId'}),
+        sendType: 2,
+        openid: storage({type: 'get', key: 'openid'})
       }
-      console.log('paramData', paramData)
+      if (brand) {
+        paramData['brandId'] = brand
+      }
       paramData = JSON.stringify(paramData)
       let param = new URLSearchParams()
       param.append('param', paramData)
@@ -173,19 +163,29 @@ export const actions = {
           'content-Type': 'application/x-www-form-urlencoded'
         }
       })
-      console.log('data', res)
       if (res.data) {
+        const data = res.data
         commit(types.SET_SEND_RES, {show: true, type: 'success', info: '寄件成功'})
         await dispatch('setSend')
-        return true
+        return {
+          code: data.code,
+          mess: data.mess,
+          obj: data.obj
+        }
       } else {
         commit(types.SET_SEND_RES, {show: true, type: 'warn', info: '寄件失败'})
-        return false
+        return {
+          code: 500,
+          mess: '寄件失败'
+        }
       }
     } catch (err) {
       console.error(err)
       commit(types.SET_SEND_RES, {show: true, type: 'warn', info: '寄件失败'})
-      return false
+      return {
+        code: 500,
+        mess: '寄件失败'
+      }
     }
   },
   async cancleSend ({ dispatch, commit }, { id, type = 5 }) {
@@ -224,7 +224,6 @@ export const actions = {
         paramkey: 'param',
         data: JSON.stringify({id})
       })
-      console.log('setSingleSend res', res)
       if (res.code === 200) {
         let data = res.obj[0]
         commit(types.SET_QR_SEND, {data})

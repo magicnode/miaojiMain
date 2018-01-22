@@ -2,7 +2,7 @@
   <div class="customservice">
     <div>
       <div class="customservice-img">
-        <img src="../assets/images/new/ser_ico_log.png" alt="妙寄logo">
+        <img src="../assets/images/new/logo.png" alt="妙寄logo">
       </div>
       <div class="customservice-num flex">
         <p>登录失败!</p>
@@ -18,10 +18,25 @@
   </div>
 </template>
 <script>
+import { addReport } from '@/services/bug'
+import { storage } from '@/util'
+import { format } from '@/util/time'
 
 export default {
   name: 'customservice',
   created () {
+    let openid = storage({
+      type: 'get',
+      key: 'openid'
+    })
+    if (!openid) {
+      openid = '这个人openid都没有'
+    }
+    let time = new Date()
+    time = format('yyyy-MM-dd hh:mm:ss', time)
+    addReport({
+      param: `${openid},${time}`
+    })
   },
   mounted () {
     window.document.title = '客服中心'

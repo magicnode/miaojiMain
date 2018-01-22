@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
-// import window from 'window'
 
 import * as user from './modules/user'
 import * as send from './modules/send'
@@ -13,7 +12,6 @@ import {brand as brandApi} from '@/api'
 
 Vue.use(Vuex)
 
-// let local = window.localStorage
 let instance = axios.create({
   timeout: 6000
 })
@@ -47,11 +45,19 @@ const store = new Vuex.Store({
           params: {id}
         })
         if (result.data) {
-          result.data.push({
+          const brand = []
+          const data = result.data
+          for (let i = 0, len = data.length; i < len; i++) {
+            const item = data[i]
+            if (item['brand'] === '京东') {
+              brand.push(item)
+            }
+          }
+          brand.push({
             brand: '空',
             brandId: null
           })
-          commit('SET_BRAND', {brand: result.data})
+          commit('SET_BRAND', {brand: brand})
           return {
             text: '获取快递品牌成功',
             type: 'success',

@@ -9,7 +9,8 @@
 import axios from 'axios'
 import { mapGetters, mapActions } from 'vuex'
 import {site as siteApi, brand as brandApi} from '@/api'
-import pic from '../assets/images/new/officedefault.png'
+import {storage} from '@/util'
+import pic from '../assets/images/new/officedefault.jpg'
 
 let instance = axios.create({
   timeout: 2000
@@ -82,7 +83,6 @@ export default {
       mapObj.addControl(geolocation)
       geolocation.getCurrentPosition()
       async function getBounds (selfPosition) {
-        console.log('sel', selfPosition)
         let bounds = mapObj.getBounds()
         let southwestOb = bounds.getSouthWest()
         let southwest = []
@@ -99,17 +99,17 @@ export default {
         for (let i = 0, len = data.length; i < len; i++) {
           let info = data[i]
           let marker = new window.AMap.Marker({
-            info: data[i],
             position: [info.longitude, info.latitude],
             // offset: new window.AMap.Pixel(-17, -42),
             draggable: false
           })
+          marker.setExtData({info: data[i]})
           marker.setMap(mapObj)
           const userId = info.userId
           const position = [info.longitude, info.latitude]
           // 标记点击事件
-          window.AMap.event.addListener(marker, 'click', async function (data) {
-            let info = data.target.G.info
+          window.AMap.event.addListenerOnce(marker, 'click', async function (data) {
+            let {info} = marker.getExtData()
             const brandRes = await axios({
               method: 'get',
               url: brandApi.index,
@@ -133,9 +133,12 @@ export default {
             window.AMapUI.loadUI(['overlay/SimpleInfoWindow'], function (SimpleInfoWindow) {
               officeBtnId = 'userId' + info.userId
               const photo = '<div class="officeimg"><img src="' + pic + '"></div>'
+              // takeState 上门取件 0 否 1支持
+              let takeState = info.takeState || 0
+              takeState = takeState === 0 ? '不支持上门取件' : '支持上门取件'
               const infoWindow = new SimpleInfoWindow({
                 infoTitle: '<span>"妙寄"全网站点: ' + info.name || '' + '</span>',
-                infoBody: photo + '<div class="office-detail"><div class="first-line"><button type="" id="navigation' + officeBtnId + '" class="navigation-btn">导航</button><p class="office-detail__more">详细<span class="more"><span></span></span></p></div><div class="office-detail__content contenthide"><p>详细地址: ' + info.descript + '</p><p>电话号码: <a href="tel:' + info.mobile + '">' + info.mobile + '</a></p></p>' + brand + '</div><p class="confirm-p">是否选择该站点为寄件站点?<button type="button" id="' + officeBtnId + '" class="confirm-btn hide">确定</button></p></div>',
+                infoBody: photo + '<div class="office-detail"><div class="first-line"><button type="" id="navigation' + officeBtnId + '" class="navigation-btn">导航</button><p class="office-detail__more">详细<span class="more"><span></span></span></p></div><div class="office-detail__content contenthide"><p>详细地址: ' + info.descript + '</p><p>电话号码: <a href="tel:' + info.mobile + '">' + info.mobile + '</a></p></p>' + brand + '</div><p class="confirm-p">是否选择该站点为寄件站点?(' + takeState + ')</p><div class="confirm-btn-cont"><button type="button" id="' + officeBtnId + '" class="hide">确定</button><div></div>',
                 offset: new window.AMap.Pixel(0, -31)
               })
               function openInfoWin () {
@@ -144,7 +147,7 @@ export default {
               function closeInfoWin () {
                 infoWindow.close(mapObj, marker.getPosition())
               }
-              window.AMap.event.addListener(marker, 'click', function () {
+              window.AMap.event.addListener(marker, 'touchstart', function () {
                 openInfoWin()
               })
               // 打开信息窗
@@ -154,7 +157,7 @@ export default {
               setTimeout(function () {
                 // 导航按钮
                 const navBtn = window.document.getElementById('navigation' + officeBtnId)
-                navBtn.addEventListener('click', function (event) {
+                navBtn.addEventListener('touchstart', function (event) {
                   event.stopPropagation()
                   closeInfoWin()
                   Navigation(position, mapObj, walking)
@@ -163,8 +166,9 @@ export default {
                 const detailmore = window.document.getElementsByClassName('office-detail__more')[0]
                 const more = window.document.getElementsByClassName('more')[0]
                 const contentDiv = window.document.getElementsByClassName('office-detail__content')[0]
-                detailmore.addEventListener('click', function (event) {
+                detailmore.addEventListener('touchstart', function (event) {
                   event.stopPropagation()
+                  // event.preventdefault()
                   const oldName = more.className
                   const oldBrandName = contentDiv.className
                   const isUpside = /upside/g
@@ -182,15 +186,29 @@ export default {
             setTimeout(function () {
               // 确认按钮
               const btn = window.document.getElementById(officeBtnId)
-              btn.addEventListener('click', function (event) {
+              btn.addEventListener('touchstart', function (event) {
                 event.stopPropagation()
                 info = JSON.stringify(info)
-                window.localStorage.removeItem('mj_addressInfo')
-                window.localStorage.setItem('mj_addressInfo', info)
-                window.history.go(-1)
+                // window.localStorage.removeItem('mjwx_addressInfo')
+                storage({
+                  type: 'remove',
+                  key: 'addressInfo'
+                })
+                // window.localStorage.setItem('mjwx_addressInfo', info)
+                storage({
+                  type: 'set',
+                  key: 'addressInfo',
+                  val: info
+                })
+                // window.history.go(-1)
+                setTimeout(function () {
+                  window.wxvue.$router.push({
+                    path: '/send'
+                  })
+                }, 300)
               }, true)
               btn.className = btn.className.replace(/hide/g, '')
-            }, 600)
+            }, 1000)
             return
           })
         }
@@ -207,7 +225,6 @@ export default {
         getBounds(selfPosition)
       })
       window.AMap.event.addListener(geolocation, 'error', function () {
-        // alert('定位失败')
         console.log('定位失败')
       })
       window.AMap.event.addListener(mapObj, 'dragend', function () {
@@ -233,6 +250,8 @@ export default {
       site: 'getSite',
       recent: 'getSiteRecent'
     })
+  },
+  updated () {
   },
   data () {
     return {

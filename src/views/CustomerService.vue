@@ -2,7 +2,7 @@
   <div class="customservice">
     <div>
       <div class="customservice-img">
-        <img src="../assets/images/new/ser_ico_log.png" alt="妙寄logo">
+        <img src="../assets/images/new/logo.png" alt="妙寄logo">
       </div>
       <div class="customservice-num flex">
         <p>客服热线</p>

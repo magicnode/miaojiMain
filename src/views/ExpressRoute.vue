@@ -6,22 +6,22 @@
         </div>
         <div class="logisticsresult-title-brand">
           <p>快递品牌: {{brand | brandtype}}</p>
-          <p>{{'快递单号: ' + route.orderSn}}</p>
+          <p>{{'快递单号: ' + orderSn}}</p>
         </div>
       </div>
       <div class="wrapper">
         <h1 v-show="route.errorResult">{{route.errorResult}}</h1>
         <div v-for="part, index in route.parts" class="logisticsresult-content" :class="{isfirstPart: index === 0}">
           <div class="logisticsresult-content--part date-intro">
-            <p class="minute">{{part.time | getMinute}}</p>
-            <p class="date">{{part.time | getDate}}</p>
+            <p class="minute">{{part.opeTime | getMinute}}</p>
+            <p class="date">{{part.opeTime | getDate}}</p>
           </div>
           <div class="line logisticsresult-content--part">
             <div class="line-div">
             </div>
           </div>
           <div class="logisticsresult-content--part">            
-            <p>{{part.processInfo}}</p>
+            <p>{{part.opeRemark}}</p>
           </div>
         </div>
       </div>
@@ -34,9 +34,10 @@ export default {
   name: 'expressroute',
   async created () {
     this.$vux.loading.show({text: ' '})
-    const query = this.$route.query
-    this.brand = query.brand
-    const res = await this.setExpressRoute(query)
+    const {orderSn, brand} = this.$route.query
+    this.brand = brand
+    this.orderSn = orderSn
+    const res = await this.setExpressRoute({orderSn})
     if (res.type !== 'success') {
       this.$vux.loading.hide()
       this.$vux.toast.show(res)
@@ -49,7 +50,8 @@ export default {
   },
   data () {
     return {
-      brand: ''
+      brand: '',
+      orderSn: ''
     }
   },
   computed: {

@@ -8,42 +8,45 @@
 </template>
 <script>
 import MJFooter from '@/components/Footer'
+import {storage} from '@/util'
 
 export default {
   name: 'contains',
   created () {
     if (process.env.NODE_ENV === 'development') {
-      window.localStorage.setItem('mj_init', 'done')
-      window.localStorage.setItem('mj_headimgurl', '//wx.qlogo.cn/mmopen/zYCT2SFoRZOlR2cj0EFrkNWbEBzsW8jxnPN7RFOEePukrWG3ItP6icX1jKXYliaVibBMUnAprSDPqPttLuApDx8Yz4aCJt22XOP/0')
-      window.localStorage.setItem('mj_nickname', '呃嗯丶')
-      window.localStorage.setItem('mj_openid', 'oCk9ywj1vT0B3ltw2m3dfE6FnHzI')
-      window.localStorage.setItem('mj_mobile', '17317272575')
-      window.localStorage.setItem('mj_userId', '8')
-      // chen
-      // window.localStorage.setItem('mj_mobile', '15800665186')
-      // window.localStorage.setItem('mj_userId', '12')
+      // 张子锐
+      storage({
+        type: 'set',
+        key: 'headimgurl',
+        val: 'http://wx.qlogo.cn/mmopen/zYCT2SFoRZOG0TpeMPnp88o8WiaT4TDxRsXKTRsKHSRXxEcd1iaGs8Oe1ghV2oMgrOtdw4FAcic3PsS7FlluSQDy5ZVTiaLWYDuH/0'
+      })
+      storage({
+        type: 'set',
+        key: 'nickname',
+        val: '明华'
+      })
+      storage({
+        type: 'set',
+        key: 'openid',
+        val: 'oCk9ywj_I6hLEwH7j-KBfJkIrDwE'
+      })
+      storage({
+        type: 'set',
+        key: 'mobile',
+        val: '17602180495'
+      })
+      storage({
+        type: 'set',
+        key: 'userId',
+        val: '8531'
+      })
+      storage({
+        type: 'set',
+        key: 'userId',
+        val: '12'
+      })
       return
     }
-    // 获取路径参数
-    // function GetQueryString (name) {
-    //   const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)')
-    //   const params = window.location.search.substr(1).match(reg)
-    //   if (params !== null) return params[2]
-    //   return null
-    // }
-    // const code = GetQueryString('code')
-    // const state = GetQueryString('state')
-    // if (!code && !state) {
-    //   console.log('container.vue: no code fail')
-    //   return this.$router.push({path: '/nouser'})
-    // } else {
-    //   window.localStorage.removeItem('mj_code')
-    //   window.localStorage.removeItem('mj_init')
-    //   window.localStorage.setItem('mj_code', code)
-    //   window.localStorage.setItem('mj_init', 'done')
-    //   this.$router.push({path: '/init', query: {code, page: state}})
-    //   return
-    // }
   },
   components: {
     'mj-footer': MJFooter

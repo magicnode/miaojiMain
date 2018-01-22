@@ -1,37 +1,5 @@
 <template>
-  <!-- 未寄件 -->
-  <div v-if="item.type === 1 && item.type !== 5">
-    <div class="senditem">
-      <div class="senditem-box">
-        <span class="senditem-box__office">
-         <span class="senditem-box__office--info">
-          寄件站点: {{item.officeName}}
-          <!-- 快递品牌: {{item.brand ? item.brand : '暂未选择'}} -->
-         </span>
-         <img src="../assets/images/new/pic_ico_map.png" alt="item.office.descript" @click="watchOffice(item.officeId)">
-        </span>
-      </div>
-      <div class="senditem-box flex">
-        <div class="senditem-box__icon">
-          收
-        </div>
-        <div class="senditem-box__address">
-          <p>{{item.reciveName}}  {{item.reciveMobile}}</p>
-          <p class="senditem-box__address--detail">{{item.reciveProvince + item.reciveCity + item.reciveDistrict + item.reciveAddress}}</p>
-        </div>
-        <span class="senditem-box__state">{{item.type | sendstatus}}</span>
-      </div>
-      <div class="senditem-box flex" style="justify-content: space-between;">
-        <p class="senditem-box__time">{{item.createTime | formatedatestamp}}</p>
-        <div>
-          <button v-show="item.type !== 5 && !readonly" type="" class="cancle-btn" @click="cancle(item)">取消订单</button>
-          <button v-show="item.type !== 5" type="" class="gosend-btn" @click="goPath(item, 'wait')">去寄件</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- 已寄件 -->
-  <div v-else-if="item.type !== 1 && item.type !== 5">
+  <div>
     <div class="senditem">
       <div class="senditem-box">
         <span class="senditem-box__office">
@@ -54,8 +22,10 @@
       <div class="senditem-box flex" style="justify-content: space-between;">
         <p class="senditem-box__time">{{item.createTime | formatedatestamp}}</p>
         <div class="senditem-box__btn">
-          <span class="senditem-box__price">{{'￥' + item.price}}</span>
-          <button type="" class="cancle-btn" @click="goPath(item, 'ready')">查看详情</button>
+          <span class="senditem-box__price" v-show="item.type !== 1 && !readonly">{{'￥' + item.price}}</span>
+          <button v-show="item.type !== 2 && item.type !== 5 && !readonly" type="" class="cancle-btn" @click="cancle(item)">删除订单</button>
+          <button v-show="item.type === 1 || item.type === 8" type="" class="gosend-btn" @click="goPath(item, 'wait')">去寄件</button>
+          <button v-show="item.type !== 1 && item.type !== 8" type="" class="cancle-btn" @click="goPath(item, 'ready')">查看详情</button>
         </div>
       </div>
     </div>
@@ -98,10 +68,9 @@ export default {
       })
     },
     goPath (item, type) {
-      console.log('irwem', item)
       const id = item.id
       const order = item.order
-      this.$router.push({path: '/send/qr', query: {id, order}})
+      this.$router.push({path: '/sendqr', query: {id, order}})
     },
     showOffice ({province = '', city = '', district = '', descript = ''}) {
       const content = province + city + district + descript
@@ -201,7 +170,6 @@ export default {
       right: 2.7rem;
     }
     &__price {
-      padding-right: 1rem;
       font-size: 1.4rem;
       color: @dark-yellow;
     }

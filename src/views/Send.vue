@@ -74,6 +74,7 @@
 <script>
 import { Selector, XInput, XTextarea, Spinner } from 'vux'
 import { mapGetters, mapActions } from 'vuex'
+import {storage} from '@/util'
 
 export default {
   name: 'send',
@@ -88,13 +89,25 @@ export default {
     if (!this.sendAddress['id'] && !this.pickupAddress['id']) {
       this.setDefaultAddress()
     }
-    let addressInfo = window.localStorage.getItem('mj_addressInfo')
+    let addressInfo = storage({
+      type: 'get',
+      key: 'addressInfo'
+    })
     addressInfo = JSON.parse(addressInfo)
     this.office = addressInfo ? addressInfo.descript : ''
-    const mjBrand = window.localStorage.getItem('mj_send_brand')
+    const mjBrand = storage({
+      type: 'get',
+      key: 'send_brand'
+    })
     this.expresstype = mjBrand || undefined
-    this.describe = window.localStorage.getItem('mj_send_describe')
-    this.note = window.localStorage.getItem('mj_send_note')
+    this.describe = storage({
+      type: 'get',
+      key: 'send_describe'
+    })
+    this.note = storage({
+      type: 'get',
+      key: 'send_note'
+    })
     this.initBrand({id: addressInfo ? addressInfo.userId : 0})
   },
   mounted () {
@@ -131,6 +144,13 @@ export default {
           value: item.brand
         })
       }
+      opt = opt.sort((a, b) => {
+        if (b.value === '京东') {
+          return 1
+        } else {
+          return -1
+        }
+      })
       return opt
     }
   },
@@ -168,15 +188,27 @@ export default {
       })
     },
     onChange (val) {
-      window.localStorage.setItem('mj_send_brand', val)
+      storage({
+        type: 'set',
+        key: 'send_brand',
+        val
+      })
       this.$store.commit('SET_SEND_ADD', {brand: val})
     },
     onChangeText (type) {
       if (type === 'describe' && this.describe) {
-        window.localStorage.setItem('mj_send_describe', this.describe)
+        storage({
+          type: 'set',
+          key: 'send_describe',
+          val: this.describe
+        })
       }
       if (type === 'note' && this.note) {
-        window.localStorage.setItem('mj_send_note', this.note)
+        storage({
+          type: 'set',
+          key: 'send_note',
+          val: this.note
+        })
       }
       this.showFooter()
     },
@@ -192,15 +224,15 @@ export default {
         })
       }
       if (this.loading) return
-      let addressInfo = window.localStorage.getItem('mj_addressInfo')
+      let addressInfo = storage({
+        type: 'get',
+        key: 'addressInfo'
+      })
       addressInfo = JSON.parse(addressInfo)
       if (!addressInfo) {
         this.showToast({text: '请选择寄件站点', type: 'warn'})
         return
       }
-      this.$vux.loading.show({
-        text: '  '
-      })
       // 提交寄件
       const timestamp = 'time' + new Date().getTime()
       let expresstype = this.expresstype
@@ -211,26 +243,56 @@ export default {
         console.error(e)
         expresstype = null
       }
-      const result = await this.createSend({
-        brand: !expresstype ? '' : expresstype,
-        describe: this.describe,
-        note: this.label,
-        office: addressInfo.userId,
-        order: timestamp,
-        receiptAddressId: this.pickupAddress['id'],
-        sendAddressId: this.sendAddress['id'],
-        type: 1
-      })
-      this.$vux.loading.hide()
-      if (result) {
-        this.showToast({text: '提交成功'})
-        this.$router.push({path: '/send/detail', query: {type: 'wait'}})
-        window.localStorage.removeItem('mj_send_describe')
-        window.localStorage.removeItem('mj_send_note')
-        return
-      } else {
-        this.showToast({text: '提交失败', type: 'warn'})
-        return
+      console.log('expresstype', expresstype)
+      try {
+        this.$vux.loading.show({
+          text: '  '
+        })
+        const openid = storage({
+          type: 'get',
+          key: 'openid'
+        })
+        let sendParam = {
+          brand: expresstype,
+          describe: this.describe,
+          note: this.label,
+          office: addressInfo.userId,
+          order: timestamp,
+          receiptAddressId: this.pickupAddress['id'],
+          sendAddressId: this.sendAddress['id'],
+          type: 1,
+          openid
+        }
+        const result = await this.createSend(sendParam)
+        console.log('res', result)
+        if (result.code === 200) {
+          this.showToast({text: '提交成功'})
+          const id = result.obj
+          if (id) {
+            this.$router.push({
+              path: '/sendqr',
+              query: {id}
+            })
+          } else {
+            this.$router.push({path: '/send/detail', query: {type: 'wait'}})
+          }
+          storage({
+            type: 'remove',
+            key: 'send_describe'
+          })
+          storage({
+            type: 'remove',
+            key: 'send_note'
+          })
+          return
+        } else {
+          this.showToast({text: '提交失败', type: 'warn'})
+          return
+        }
+      } catch (err) {
+        console.error(err)
+      } finally {
+        this.$vux.loading.hide()
       }
     },
     showFooter () {

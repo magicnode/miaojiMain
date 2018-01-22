@@ -4,16 +4,24 @@
 </template>
 
 <script>
+import {storage} from '@/util'
 
 export default {
   created () {
-    let {code, state} = this.$route.query
-    if (!code && !state) {
+    let {openid} = this.$route.query
+    if (!openid) {
       console.log('Redirect.vue: no code fail')
     } else {
-      window.localStorage.removeItem('mj_code')
-      window.localStorage.setItem('mj_code', code)
-      this.$router.push({path: '/init', query: {code, page: state}})
+      storage({
+        type: 'remove',
+        key: 'openid'
+      })
+      storage({
+        type: 'set',
+        key: 'openid',
+        val: openid
+      })
+      this.$router.push({path: '/init'})
     }
   },
   data () {

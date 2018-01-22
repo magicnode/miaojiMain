@@ -1,10 +1,8 @@
-import {site as siteApi} from '@/api'
 import axios from 'axios'
-import window from 'window'
+import {site as siteApi} from '@/api'
 
 import * as types from '../mutation-types'
 
-let local = window.localStorage
 let instance = axios.create({
   timeout: 6000
 })

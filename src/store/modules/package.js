@@ -1,10 +1,10 @@
-import {pickup as pickupApi, send as sendApi} from '@/api'
 import axios from 'axios'
+import {pickup as pickupApi, send as sendApi} from '@/api'
+import {storage} from '@/util'
 import request from '@/util/request'
 
 import * as types from '../mutation-types'
 
-let local = window.localStorage
 let instance = axios.create({
   timeout: 6000
 })
@@ -101,11 +101,15 @@ export const actions = {
   },
   async initPackageSend ({ commit }, {query = {mobile: '', page: 1, rows: 5}}) {
     try {
+      const userId = storage({
+        type: 'get',
+        key: 'userId'
+      })
       const res = await request({
         url: sendApi.index,
         method: 'parampost',
         paramkey: 'param',
-        data: JSON.stringify({userId: local.getItem('mj_userId')})
+        data: JSON.stringify({userId: userId})
       })
       if (res.code === 200) {
         const data = res.obj
@@ -129,11 +133,15 @@ export const actions = {
   },
   async addPackageSend ({ commit }, {query = {mobile: '', page: 1, rows: 5}}) {
     try {
+      const userId = storage({
+        type: 'get',
+        key: 'userId'
+      })
       const res = await request({
         url: sendApi.index,
         method: 'parampost',
         paramkey: 'param',
-        data: JSON.stringify({userId: local.getItem('mj_userId')})
+        data: JSON.stringify({userId: userId})
       })
       if (res.code === 200) {
         let data = res.obj

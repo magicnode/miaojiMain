@@ -25,7 +25,7 @@ import minePng from '../assets/images/new/nav_min_nor.png'
 import acminePng from '../assets/images/new/nav_min_che.png'
 
 export default {
-  name: 'footer',
+  name: 'mjfooter',
   props: {
     title: {
       type: String,

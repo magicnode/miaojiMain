@@ -1,11 +1,7 @@
 import {express as expressApi} from '@/api'
-import axios from 'axios'
+import request from '@/util/request'
 
 import * as types from '../mutation-types'
-
-let instance = axios.create({
-  timeout: 6000
-})
 
 export const state = {
   data: {}
@@ -18,17 +14,27 @@ export const getters = {
 
 // actions
 export const actions = {
-  async setExpressRoute ({commit}, {brand, orderSn}) {
+  async setExpressRoute ({commit}, {orderSn}) {
     try {
-      const res = await instance({
-        method: 'get',
-        url: expressApi.route,
-        params: {
-          orderSn
-        }
+      orderSn = 'VT39702515053'
+      let data = {
+        order_sn: orderSn
+      }
+      data = JSON.stringify(data)
+      const res = await request({
+        method: 'parampost',
+        url: expressApi.jdTrace,
+        paramkey: 'param',
+        data
       })
-      if (res.status === 200) {
-        const data = res.data
+      if (res.code === 200 && res.obj) {
+        let data = {}
+        data.mess = res.mess
+        let obj = res.obj
+        if (obj.length > 0) {
+          obj = obj.reverse()
+        }
+        data.parts = res.obj
         commit(types.SET_EXPRESS_ROTUE, {data})
         return {
           type: 'success',

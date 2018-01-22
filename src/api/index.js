@@ -1,9 +1,10 @@
 // wu cong fake url
 // let url = 'http://1a699l6063.imwork.net/WeChatService/'
 // wu cong 本地
-// let url = 'http://192.168.0.168:8088/WeChatService/'
+let url = 'http://192.168.0.168:8088/WeChatService/'
+// let url = 'http://192.168.0.66:8088/WeChatService/'
 // online app 云端服务
-let url = 'http://app.quandikeji.com/WeChatService/'
+// let url = 'http://app.quandikeji.com/WeChatService/'
 
 if (process.env.NODE_ENV !== 'development') {
   url = 'http://app.quandikeji.com/WeChatService/'
@@ -59,10 +60,18 @@ export const wx = {
     const url = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=' + AppId + '&secret=' + secret + '&code=' + code + '&grant_type=authorization_code'
     return url
   },
-  webtoken: 'https://api.weixin.qq.com/sns/oauth2/access_token'
+  webtoken: 'https://api.weixin.qq.com/sns/oauth2/access_token',
+  jssdkInit: url + 'PayController/getWxConfig',
+  wxpayInit: url + 'PayController/unifiedOrder'
 }
 
 export const express = {
   // url = url + 'brand=' + brand + '&orderSn=' + orderSn
-  route: 'http://app.quandikeji.com:8088/quandiExpressSite1.4.0/Logistics/queryLogisticsInfoForJson'
+  route: 'http://app.quandikeji.com:8088/quandiExpressSite1.4.0/Logistics/queryLogisticsInfoForJson',
+  jdTrace: 'http://app.quandikeji.com:8288/JDService/order/orderTrace'
+}
+
+export const bug = {
+  // ?param=5512341545454
+  index: url + 'errorReport'
 }

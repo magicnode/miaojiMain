@@ -31,7 +31,7 @@
           ref="my_scroller_send"
           class="senddetail-scroller">
           <mj-spinner type="line" slot="refresh-spinner"></mj-spinner>
-          <div class="senddetail-cell-detail" v-for="item in send" :key="item.id">
+          <div class="senddetail-cell-detail" v-for="item in send" v-show="item.type !== 5" :key="item.id">
             <mj-senditem :item="item" readonly></mj-senditem>
           </div>
           <mj-spinner type="circle" slot="infinite-spinner"></mj-spinner>
@@ -45,6 +45,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { Divider, XSwitch, Spinner } from 'vux'
+import { storage } from '@/util'
 
 export default {
   name: 'userpackage',
@@ -81,14 +82,12 @@ export default {
   },
   mounted () {
     window.document.title = '我的包裹'
-    this.scrollBy()
   },
   data () {
     return {
     }
   },
   updated () {
-    this.saveScrollTop()
   },
   methods: {
     ...mapActions([
@@ -100,7 +99,6 @@ export default {
     ]),
     changeShow (type) {
       this.$store.commit('SET_PACKAGE_TYPE', {type})
-      this.scrollBy()
     },
     async refreshPickup (done) {
       const mobile = this.user.mobile
@@ -143,18 +141,16 @@ export default {
         rows: 5
       }
       setTimeout(async function () {
-        console.log('refresh send')
         const resultSend = await _this.initPackageSend({query})
         if (resultSend.type !== 'success') {
           _this.showToast(resultSend)
         }
-        done()
+        done(true)
       }, 1200)
     },
     async infiniteSend (done) {
       const _this = this
       setTimeout(async function () {
-        console.log('infinite send')
         const resultSend = await _this.addPackageSend({query: {}})
         if (resultSend.type !== 'success') {
           _this.showToast(resultSend)
@@ -176,13 +172,25 @@ export default {
       this.$router.push({path: '/office/location', query: {userId}})
     },
     saveScrollTop () {
-      window.localStorage.setItem('mj_package_pickup_scroll_top', this.$refs.my_scroller_pickup.getPosition().top)
-      window.localStorage.setItem('mj_package_send_scroll_top', this.$refs.my_scroller_send.getPosition().top)
+      storage({
+        type: 'set',
+        key: 'package_pickup_scroll_top',
+        val: this.$refs.my_scroller_pickup.getPosition().top
+      })
+      storage({
+        type: 'set',
+        key: 'package_send_scroll_top',
+        val: this.$refs.my_scroller_send.getPosition().top
+      })
     },
     scrollBy () {
       const _this = this
-      const top1 = window.localStorage.getItem('mj_package_pickup_scroll_top')
-      const top2 = window.localStorage.getItem('mj_package_send_scroll_top')
+      const top1 = storage({
+        key: 'package_pickup_scroll_top'
+      })
+      const top2 = storage({
+        key: 'package_send_scroll_top'
+      })
       setTimeout(function () {
         _this.$refs.my_scroller_pickup.scrollBy(0, top1, true)
         _this.$refs.my_scroller_send.scrollBy(0, top2, true)
@@ -191,6 +199,7 @@ export default {
   },
   beforeDestroy () {
     this.saveScrollTop()
+    this.$vux.toast.hide()
   }
 }
 </script>

@@ -20,6 +20,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import { storage } from '@/util'
 
 export default {
   name: 'usercenter',
@@ -83,7 +84,9 @@ export default {
           console.log('no loginout')
         },
         onConfirm () {
-          window.localStorage.clear()
+          storage({
+            type: 'clear'
+          })
           _this.isReresh = true
           setTimeout(function () {
             _this.$router.push({path: '/init', query: {page: 3}})
