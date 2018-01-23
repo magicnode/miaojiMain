@@ -1,5 +1,8 @@
 <template>
   <div class="addaddress">
+    <div class="checkaddress" v-show="afterPaste">
+      请检查拆分地址是否准确，如有遗漏请及时补充
+    </div>
     <div class="addaddress-container">
       <group>
          <x-input @on-focus="fixBtn" @on-blur="removeFixBtn" title="姓名" v-model="name" :max="20" placeholder="请填写您的真实姓名" required></x-input>
@@ -9,17 +12,17 @@
            @on-focus="fixBtn" 
            @on-blur="removeFixBtn" 
            v-if="pagetype === 'add'"
-           class="quyu" 
-           required 
-           title="地区" 
+           class="quyu"
+           required
+           title="地区"
            v-model="location"
            raw-value
            :list="addressData"
            placeholder="请选择省市区"></x-address>
-         <x-address 
-           class="quyu" 
-           v-if="pagetype === 'edit'" 
-           required 
+         <x-address
+           class="quyu"
+           v-if="pagetype === 'edit'"
+           required
            title="地区" 
            raw-value 
            v-model="location" 
@@ -38,7 +41,7 @@
            <textarea v-model="pasteAddress" name="aitext" :placeholder="aitextOptions['placeholder']"></textarea>
          </div>
          <div class="submit">
-           <button type="" @click.stop="handelPasteAddressAlp">提交</button>
+           <button type="" @click.stop="handelPasteAddress">提交</button>
          </div>
        </div>
        <div class="addaddress-container-add">
@@ -51,7 +54,7 @@
 import { XInput, XSwitch, XTextarea, XAddress, ChinaAddressV4Data, Radio, Value2nameFilter as value2name } from 'vux'
 import { mapActions } from 'vuex'
 /* eslint-disable no-unused-vars */
-import { DICT, DICT_FIXED } from '@/util/location'
+import { DICT_ARR } from '@/util/location'
 
 export default {
   name: 'addaddress',
@@ -95,7 +98,8 @@ export default {
       location: [],
       address: '',
       value: false,
-      pasteAddress: ''
+      pasteAddress: '',
+      afterPaste: false
     }
   },
   computed: {
@@ -238,6 +242,20 @@ export default {
         Btn.className = classname.replace(/fixed-fill/g, '')
       }, 500)
     },
+    handelPasteAddress () {
+      this.$vux.loading.show()
+      const _this = this
+      setTimeout(function () {
+        _this.$vux.loading.hide()
+        _this.afterPaste = true
+      }, 1200)
+      let text = this.pasteAddress
+      const {name, mobile, location, address} = this.handelAddressText(text)
+      this.name = name
+      this.mobile = mobile
+      this.location = location
+      this.address = address
+    },
     /**
      * 1. 使用 string.match(/1[1|3|4|5|7|8|9][0-9]\d{8}$/g) 解析出 手机号码
      * 2. 从文本中剔除手机号，然后解析出省市区
@@ -245,11 +263,9 @@ export default {
      * 4. 从剩余的文本中选出名字
      * 如果有省一级，则从省 自上而下查询，如果只有区一级，则从区自下而上查询
      */
-    handelPasteAddressAlp () {
-      // this.$vux.loading.show()
-      let pasteAddress = this.pasteAddress
-      pasteAddress = '妙寄小哥，13700000  000,徐州睢宁某某街道某某大厦001号写写'
-      if (!pasteAddress) {
+    handelAddressText (text) {
+      // text = '妙寄小哥，13700000  000,湖北襄阳市某某街道某某大厦001号写写'
+      if (!text) {
         this.$vux.toast.show({
           text: '请先输入地址!',
           width: '20rem',
@@ -257,34 +273,89 @@ export default {
         })
         return
       }
-      pasteAddress = pasteAddress.replace(/[\s|，|~|`|!|@|#|$|%|^|&|*|(|)|-|;|:|"|'|,|<|.|>|?]/g, '')
-      console.log('pasteAddress', pasteAddress)
+      text = text.replace(/[\s|，|~|`|!|@|#|$|%|^|&|*|(|)|-|;|:|"|'|,|<|.|>|?|省|市|区|县]/g, '')
+      // get mobile
+      let mobile = ''
       const mobileReg = /1[1|3|4|5|7|8|9][0-9]\d{8}/g
-      let mobile = pasteAddress.match(mobileReg)
-      console.log('mobile', mobile)
+      mobile = text.match(mobileReg)
       mobile = mobile ? mobile[0] : ''
-      console.log('mobile', mobile)
-      this.mobile = mobile
-      pasteAddress = pasteAddress.replace(mobile, '')
-      console.log('pasteAddress', pasteAddress)
-      for (let i in DICT) {
-        // const item = /${DICT[i]}/g
-        let item = DICT[i]
-        const itemR = item.replace(/['省'|'市'|'区'|'县']/g, '')
-        // item = new RegExp(item, 'g')
-        if (pasteAddress.includes(itemR)) {
-          console.log('item', item)
+
+      // get locaion 省 市 区/县
+      let location = []
+      text = text.replace(mobile, '')
+      let locationResult = []
+      for (let i in DICT_ARR) {
+        let item = DICT_ARR[i]
+        let count = 0
+        for (let j = 0; j < item.length; j++) {
+          let iitem = item[j]
+          const itemR = iitem.replace(/['省'|'市'|'区'|'县'|\s|,]/g, '')
+          if (text.includes(itemR)) {
+            count++
+          }
+        }
+        if (count > 0) {
+          locationResult.push({
+            count,
+            value: item
+          })
         }
       }
-      // console.log('DICT_FIXED', DICT_FIXED)
+      locationResult = locationResult.sort(function (a, b) {
+        return b.count - a.count
+      })
+      location = locationResult[0]['value']
+      // get address 详细地址
+      let address = ''
+      let preIndex = 0
+      let nextIndex = 0
+      let indexlist = []
+      for (let ii = 0; ii < location.length; ii++) {
+        let item = location[ii]
+        item = item.replace(/[省|市|区|县]/g, '')
+        const reg = new RegExp(item, '')
+        const index = text.match(reg)
+        if (index) {
+          indexlist.push({
+            preIndex: index['index'],
+            nextIndex: (index['index'] + item.length - 1)
+          })
+        }
+      }
+      indexlist = indexlist.sort(function (a, b) {
+        return a.preIndex - b.preIndex
+      })
+      preIndex = indexlist[0]['preIndex']
+      nextIndex = indexlist.pop()['preIndex']
+      const addressPart1 = text.substring(0, preIndex)
+      const addressPart2 = text.substring(nextIndex, text.length)
+      let addressIndex = addressPart2.match(/[号|幢|栋|室|房]/)
+      if (addressIndex) {
+        addressIndex = addressIndex['index'] + 1
+      }
+      address = addressPart2.substring(0, addressIndex)
+
+      // get name
+      let name = ''
+      if (addressPart2.length > addressIndex) {
+        name = addressPart2.substring(addressIndex, addressPart2.length)
+      } else {
+        name = addressPart1
+      }
+      return {
+        mobile,
+        location,
+        name,
+        address
+      }
     },
-    handelPasteAddress () {
+    handelPasteAddressOld () {
       let pasteAddress = this.pasteAddress
       if (!pasteAddress) {
         return
       }
       // pasteAddress = '妙寄小哥，1370000000,上海市长宁区某某街道某某大厦001号'
-      const {name, mobile, address, province, city, district} = this.handelAddressText(pasteAddress)
+      const {name, mobile, address, province, city, district} = this.handelAddressTextOld(pasteAddress)
       this.name = name
       this.mobile = mobile
       this.address = address
@@ -295,7 +366,7 @@ export default {
         type: 'success'
       })
     },
-    handelAddressText (text) {
+    handelAddressTextOld (text) {
       if (!text) {
         return null
       }
@@ -343,6 +414,12 @@ export default {
 .addaddress {
   min-height: 100vh;
   background-color: @bg-grey;
+  .checkaddress {
+    padding: .4rem 0;
+    font-size: 1.4rem;
+    color: @dark-yellow;
+    background: #d9d9d9;
+  }
   &-container {
     &-add {
       position: fixed;

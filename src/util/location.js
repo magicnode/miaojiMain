@@ -4036,7 +4036,7 @@ const tree = (list) => {
     item = list[ii]
 
     if (!item) continue
-            /* jshint -W041 */
+    /* jshint -W041 */
     if (item.pid === undefined && item.parentId === undefined) {
       result.push(item)
       continue
@@ -4067,4 +4067,56 @@ export let DICT_FIXED = (function () {
     }
   }
   return tree(fixed)
+}())
+
+/* eslint-disable no-unused-vars */
+const arr = (list) => {
+  let item
+  let mapResult = tree(list)
+  let result = []
+  for (let iii = 0; iii < mapResult.length; iii++) {
+    item = mapResult[iii]
+    if (!item) continue
+    let str = ''
+    let province = item['name']
+    let city = ''
+    let district = ''
+    let children = item['children']
+    if (!children) continue
+
+    for (let j = 0; j < children.length; j++) {
+      item = children[j]
+      if (!item) continue
+      city = item['name']
+
+      let cChildren = item.children
+      if (!cChildren) continue
+      for (let jj = 0; jj < cChildren.length; jj++) {
+        item = cChildren[jj]
+        if (!item) continue
+        district = item['name']
+        str = [province, city, district]
+        result.push(str)
+      }
+    }
+  }
+  return result
+}
+
+export let DICT_ARR = (function () {
+  let fixed = []
+  for (let id in DICT) {
+    if ({}.hasOwnProperty.call(DICT, id)) {
+      let pid
+      if (id.slice(2, 6) !== '0000') {
+        pid = id.slice(4, 6) === '00' ? (`${id.slice(0, 2)}0000`) : `${id.slice(0, 4)}00`
+      }
+      fixed.push({
+        id,
+        pid,
+        name: DICT[id]
+      })
+    }
+  }
+  return arr(fixed)
 }())
