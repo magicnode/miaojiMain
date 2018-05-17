@@ -13,15 +13,13 @@ import config from 'config'
 import { Loading } from 'vux'
 import { mapState, mapActions, mapGetters } from 'vuex'
 import {storage} from '@/util'
+import { wx } from '@/api'
 
-let appid = config.dev.appid
-let redirectUri = 'http://171u9555b3.iask.in/'
-if (process.env.NODE_ENV !== 'development') {
-  console.log('this is pro app')
-  appid = config.pro.appid
-  // redirectUri = 'http://www.mijihome.cn/redirect/'
-  redirectUri = 'http://app.quandikeji.com/WeChatService/OAuth'
-}
+const NODE_ENV = process.env.NODE_ENV
+console.log('111', NODE_ENV)
+let appid = config[NODE_ENV].appid
+// let redirectUri = 'http://171u9555b3.iask.in/'
+let redirectUri = wx.redirect
 
 export default {
   name: 'app',

@@ -144,6 +144,7 @@ export default {
       const orderSn = this.data.order
       // const orderSn = '15008555555555'
       const money = this.data.price
+      const brandId = this.data.brandId
       if (Number(money) === 0) {
         this.$vux.toast.show({
           text: '正在定价中，定价结束后会有微信模板消息通知',
@@ -155,6 +156,7 @@ export default {
       }
       let params = {
         id: this.id,
+        brandId,
         openid: storage({key: 'openid'}),
         orderSn,
         total_fee: money,

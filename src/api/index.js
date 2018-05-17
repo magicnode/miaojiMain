@@ -1,13 +1,24 @@
-// wu cong fake url
-// let url = 'http://1a699l6063.imwork.net/WeChatService/'
-// wu cong 本地
-// let url = 'http://192.168.0.168:8088/WeChatService/'
-// let url = 'http://192.168.0.66:8088/WeChatService/'
-// online app 云端服务
-let url = 'http://app.quandikeji.com/WeChatService/'
+const NODE_ENV = process.env.NODE_ENV
+let url
 
-if (process.env.NODE_ENV !== 'development') {
-  url = 'http://app.quandikeji.com/WeChatService/'
+switch (NODE_ENV) {
+  case 'dev':
+    // wu cong fake url
+    // let url = 'http://1a699l6063.imwork.net/WeChatService/'
+    // wu cong 本地
+    // let url = 'http://192.168.0.168:8088/WeChatService/'
+    // let url = 'http://192.168.0.66:8088/WeChatService/'
+    // online app 云端服务
+    url = 'http://app.quandikeji.com/WeChatService/'
+    break
+  case 'pro':
+    url = 'http://app.quandikeji.com/WeChatService/'
+    break
+  case 'taian':
+    url = 'http://wechat.mijihome.cn/WeChatServiceTA/'
+    break
+  default:
+    break
 }
 
 export const pic = {
@@ -62,7 +73,8 @@ export const wx = {
   },
   webtoken: 'https://api.weixin.qq.com/sns/oauth2/access_token',
   jssdkInit: url + 'PayController/getWxConfig',
-  wxpayInit: url + 'PayController/unifiedOrder'
+  wxpayInit: url + 'PayController/unifiedOrder',
+  redirect: url + 'OAuth'
 }
 
 export const express = {

@@ -49,9 +49,10 @@ const store = new Vuex.Store({
           const data = result.data
           for (let i = 0, len = data.length; i < len; i++) {
             const item = data[i]
-            if (item['brand'] === '京东') {
-              brand.push(item)
-            }
+            // if (item['brand'] === '京东') {
+            //   brand.push(item)
+            // }
+            brand.push(item)
           }
           brand.push({
             brand: '空',

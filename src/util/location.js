@@ -4103,7 +4103,7 @@ const arr = (list) => {
   return result
 }
 
-export let DICT_ARR = (function () {
+export const DICT_ARR = (function () {
   let fixed = []
   for (let id in DICT) {
     if ({}.hasOwnProperty.call(DICT, id)) {

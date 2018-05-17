@@ -217,7 +217,7 @@ export default {
         // 定位成功后在 当前位置上打上标记
         const selfPosition = data.position
         let mymarker = new window.AMap.Marker({
-          icon: 'http://oxou6bzgv.bkt.clouddn.com/marker_19x23.png',
+          icon: 'http://cms.mingz-tech.com/cdn/marker_19x23.png',
           title: '我的位置',
           position: [selfPosition.lng, selfPosition.lat]
         })
