@@ -12,9 +12,9 @@ import {site as siteApi, brand as brandApi} from '@/api'
 import {storage} from '@/util'
 import pic from '../assets/images/new/officedefault.jpg'
 
-let instance = axios.create({
-  timeout: 2000
-})
+// let instance = axios.create({
+//   timeout: 2000
+// })
 
 // 导航按钮绑定事件
 function Navigation (position, map, walking) {
@@ -92,8 +92,17 @@ export default {
         let northeast = []
         northeast[0] = northeastOb.lng
         northeast[1] = northeastOb.lat
-        const res = await instance.get(siteApi.location, {
-          params: {southwest: '[' + southwest.toString() + ']', northeast: '[' + northeast.toString() + ']'}
+        let params = new URLSearchParams()
+        params.append('southwest', '[' + southwest + ']')
+        params.append('northeast', '[' + northeast + ']')
+        const res = await axios({
+          url: siteApi.location,
+          method: 'post',
+          data: params,
+          timeout: 20000,
+          headers: {
+            'content-Type': 'application/x-www-form-urlencoded'
+          }
         })
         let data = res.data
         for (let i = 0, len = data.length; i < len; i++) {

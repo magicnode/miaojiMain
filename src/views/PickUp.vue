@@ -8,7 +8,7 @@
         </tab>
       </div>
       <div class="senddetail-cell" v-show="pageType === 'wait'">
-        <scroller 
+        <scroller
           :on-refresh="refreshWait"
           :on-infinite="infiniteWait"
           ref="my_scroller_1"

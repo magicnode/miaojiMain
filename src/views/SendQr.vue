@@ -46,6 +46,11 @@
           <img style="width: 1.4rem;padding: 0 1rem;position: absolute;right: 6px;" src="../assets/images/new/pic_ico_map.png" alt="地址" @click="watchOffice(data.officeId)">
         </div>
         <div class="sendqr-detail-box">
+          <span class="sendqr-detail-box__title">运单编号</span>
+          <span class="sendqr-detail-box__yin">:</span>
+          <span class="sendqr-detail-box__content">{{data.order}}</span>
+        </div>
+        <div class="sendqr-detail-box">
           <span class="sendqr-detail-box__title">快递品牌</span>
           <span class="sendqr-detail-box__yin">:</span>
           <span class="sendqr-detail-box__content">{{data.brandId | brandtype}}</span>
@@ -145,6 +150,7 @@ export default {
       // const orderSn = '15008555555555'
       const money = this.data.price
       const brandId = this.data.brandId
+      const trandNo = this.data.trandNo
       if (Number(money) === 0) {
         this.$vux.toast.show({
           text: '正在定价中，定价结束后会有微信模板消息通知',
@@ -157,6 +163,7 @@ export default {
       let params = {
         id: this.id,
         brandId,
+        trandNo,
         openid: storage({key: 'openid'}),
         orderSn,
         total_fee: money,

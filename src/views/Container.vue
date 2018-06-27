@@ -13,7 +13,7 @@ import {storage} from '@/util'
 export default {
   name: 'contains',
   created () {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'dev') {
       // 张子锐
       storage({
         type: 'set',

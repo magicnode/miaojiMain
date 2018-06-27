@@ -7,8 +7,8 @@
   "scripts": {
     "dev": "node build/dev-server.js",
     "build": "node build/build.js",
-    "build-taian": "node build/build-taian.js",
-    "build-miji": "node build/build.js",
+    "build-pro": "node build/build.js",
+    "build-test": "node build/build-taian.js",
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {

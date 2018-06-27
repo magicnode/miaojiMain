@@ -6,8 +6,9 @@ switch (NODE_ENV) {
     // wu cong fake url
     // let url = 'http://1a699l6063.imwork.net/WeChatService/'
     // wu cong 本地
-    // let url = 'http://192.168.0.168:8088/WeChatService/'
-    // let url = 'http://192.168.0.66:8088/WeChatService/'
+    // url = 'http://192.168.0.168:8088/WeChatService/'
+    // url = 'http://192.168.0.66:8088/WeChatService/'
+    url = 'http://192.168.231.50:8088/WeChatService/'
     // online app 云端服务
     url = 'http://app.quandikeji.com/WeChatService/'
     break
@@ -80,7 +81,8 @@ export const wx = {
 export const express = {
   // url = url + 'brand=' + brand + '&orderSn=' + orderSn
   route: 'http://app.quandikeji.com:8088/quandiExpressSite1.4.0/Logistics/queryLogisticsInfoForJson',
-  jdTrace: 'http://app.quandikeji.com:8288/JDService/order/orderTrace'
+  jdTrace: 'http://app.quandikeji.com:8288/JDService/order/orderTrace',
+  kdn: 'http://www.mijihome.cn:8088/ExpressCompany/ExpressOperation/KdniaoTrackQuery'
 }
 
 export const bug = {

@@ -10,18 +10,16 @@
         </div>
       </div>
       <div class="wrapper">
-        <h1 v-show="route.errorResult">{{route.errorResult}}</h1>
-        <div v-for="part, index in route.parts" class="logisticsresult-content" :class="{isfirstPart: index === 0}">
-          <div class="logisticsresult-content--part date-intro">
-            <p class="minute">{{part.opeTime | getMinute}}</p>
-            <p class="date">{{part.opeTime | getDate}}</p>
-          </div>
+        <h1 v-show="route.reason">{{route.reason}}</h1>
+        <div v-for="part, index in route.parts" class="logisticsresult-content" :key="index" :class="{isfirstPart: index === 0}">
           <div class="line logisticsresult-content--part">
             <div class="line-div">
             </div>
           </div>
+          
           <div class="logisticsresult-content--part">            
-            <p>{{part.opeRemark}}</p>
+            <p class="minute">{{part.AcceptTime}}</p>
+            <p>{{part.AcceptStation}}</p>
           </div>
         </div>
       </div>
@@ -37,7 +35,8 @@ export default {
     const {orderSn, brand} = this.$route.query
     this.brand = brand
     this.orderSn = orderSn
-    const res = await this.setExpressRoute({orderSn})
+    const expCode = this.$options.filters['brandtypekdn'](brand)
+    const res = await this.setExpressRoute({expNo: orderSn, expCode})
     if (res.type !== 'success') {
       this.$vux.loading.hide()
       this.$vux.toast.show(res)
@@ -143,7 +142,7 @@ export default {
         font-size: 1.4rem;
       }
       p.minute {
-        text-align: center;
+        text-align: left;
         font-size: 1.4rem;
         max-height: 1.4rem;
         // overflow: hidden;

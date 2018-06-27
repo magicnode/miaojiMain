@@ -14,27 +14,28 @@ export const getters = {
 
 // actions
 export const actions = {
-  async setExpressRoute ({commit}, {orderSn}) {
+  async setExpressRoute ({commit}, {expNo, expCode}) {
     try {
-      orderSn = 'VT39702515053'
       let data = {
-        order_sn: orderSn
+        expCode,
+        expNo
       }
       data = JSON.stringify(data)
       const res = await request({
         method: 'parampost',
-        url: expressApi.jdTrace,
+        url: expressApi.kdn,
         paramkey: 'param',
         data
       })
       if (res.code === 200 && res.obj) {
         let data = {}
         data.mess = res.mess
-        let obj = res.obj
-        if (obj.length > 0) {
-          obj = obj.reverse()
+        data.reason = res.obj.Reason || ''
+        let Traces = res.obj.Traces
+        if (Traces.length > 0) {
+          Traces = Traces.reverse()
         }
-        data.parts = res.obj
+        data.parts = Traces
         commit(types.SET_EXPRESS_ROTUE, {data})
         return {
           type: 'success',

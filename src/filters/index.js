@@ -107,6 +107,38 @@ const BRAND_TYPE = {
   '71': '高铁快运'
 }
 
+const BRAND_TYPE_KDN = {
+  '0': '',
+  '2': 'UC',
+  '3': 'LB',
+  '4': 'SURE',
+  '5': 'FAST',
+  '6': 'QFKD',
+  '7': 'HTKY',
+  '8': 'HHTT',
+  '9': 'ZTO',
+  '11': 'STO',
+  '12': 'YTO',
+  '14': 'EMS',
+  '15': 'GTO',
+  '16': 'MY',
+  '17': 'YZXB',
+  '18': 'ZJS',
+  '19': 'KYSY',
+  '20': 'JD',
+  '21': 'DD',
+  '22': 'WXWL',
+  '23': 'MJ',
+  '24': 'ZTWL',
+  '27': 'PJ',
+  '26': 'ANE',
+  '28': 'RRS',
+  '29': 'RFD',
+  '10': 'YD',
+  '13': 'SF',
+  '71': 'GTSD'
+}
+
 const BRAND_IMG = {
   '0': '全部品牌',
   '2': './static/imgs/expresslogo/yousu.png',
@@ -148,6 +180,17 @@ export const brandtype = function (val) {
     return '品牌未选择'
   }
   return BRAND_TYPE[val]
+}
+
+export const brandtypekdn = function (val) {
+  if (!val) {
+    return BRAND_TYPE_KDN['0']
+  }
+  val = val.toString()
+  if (!BRAND_TYPE_KDN[val]) {
+    return ''
+  }
+  return BRAND_TYPE_KDN[val]
 }
 
 export const brandimg = function (val) {
