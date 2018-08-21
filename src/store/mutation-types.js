@@ -12,7 +12,7 @@ export const SET_ADDRESS_RES = 'SET_ADDRESS_RES'
 
 export const SET_SEND = 'SET_SEND'
 
-export const SET_QR_SEND = 'SET_Qr_SEND'
+export const SET_QR_SEND = 'SET_QR_SEND'
 
 export const SET_SEND_SWITCH = 'SET_SEND_SWITCH'
 

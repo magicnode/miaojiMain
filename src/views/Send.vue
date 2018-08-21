@@ -8,52 +8,56 @@
           </cell>
         </group>
       </div>
-      <div class="send-container-address flex" style="border-bottom: 1px solid #dedede;">
-        <div class="send-container-address__intro">
-          <span class="bgblue">寄</span>
-        </div>
-        <div class="send-container-address__info">
-          <div class="send-container-address__info--line">
-            <div>
-              <span>
-                {{sendAddress['name']}}&nbsp;&nbsp;
-              </span>
-              <span class="address-info">
-                {{sendAddress['mobile']}}    
-              </span>
+      <router-link to="/address?type=send&pick=1">
+        <div class="send-container-address flex" style="border-bottom: 1px solid #dedede;">
+            <div class="send-container-address__intro">
+              <span class="bgblue">寄</span>
             </div>
-          </div>
-          <p class="address-detail-info">
-           {{sendAddress['address']}}
-          </p>
-        </div>
-        <div class="send-container-address__link">
-          <router-link to="/address?type=send&pick=1">
-            地址簿
-          </router-link>
-        </div>
-      </div>
-      <div class="send-container-address flex">
-        <div class="send-container-address__intro">
-          <span class="bgyellow">收</span>
-        </div>
-        <div class="send-container-address__info">
-          <div class="send-container-address__info--line">
-            <div>
-              <span>{{pickupAddress['name']}}&nbsp;&nbsp;</span>
-              <span class="address-info">
-                {{pickupAddress['mobile']}}
-              </span>
+            <div class="send-container-address__info">
+              <div class="send-container-address__info--line">
+                <div>
+                  <span>
+                    {{sendAddress['name']}}&nbsp;&nbsp;
+                  </span>
+                  <span class="address-info">
+                    {{sendAddress['mobile']}}    
+                  </span>
+                </div>
+              </div>
+              <p class="address-detail-info">
+              {{sendAddress['address']}}
+              </p>
             </div>
+            <div class="send-container-address__link">
+              <router-link to="/address?type=send&pick=1">
+                地址簿
+              </router-link>
+            </div>
+        </div>
+      </router-link>
+      <router-link to="/address?type=pickup&pick=1">
+        <div class="send-container-address flex">
+          <div class="send-container-address__intro">
+            <span class="bgyellow">收</span>
           </div>
-          <p class="address-detail-info">{{pickupAddress['address']}}</p>
+          <div class="send-container-address__info">
+            <div class="send-container-address__info--line">
+              <div>
+                <span>{{pickupAddress['name']}}&nbsp;&nbsp;</span>
+                <span class="address-info">
+                  {{pickupAddress['mobile']}}
+                </span>
+              </div>
+            </div>
+            <p class="address-detail-info">{{pickupAddress['address']}}</p>
+          </div>
+          <div class="send-container-address__link">
+            <router-link to="/address?type=pickup&pick=1">
+              地址簿
+            </router-link>
+          </div>
         </div>
-        <div class="send-container-address__link">
-          <router-link to="/address?type=pickup&pick=1">
-            地址簿
-          </router-link>
-        </div>
-      </div>
+      </router-link>
       <div class="send-container-select">
         <group label-width="6rem" label-align="left">
           <cell class="office" title="寄件站点" is-link link="/hallmap">{{office || '选择寄件站点'}}</cell>
@@ -429,6 +433,7 @@ label {
         padding-left: .8rem;
         flex: 9;
         text-align: left;
+        color: @text-color;
         &--line {
           div {
             display: flex;

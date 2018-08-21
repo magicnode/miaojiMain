@@ -17,8 +17,8 @@ export const actions = {
   async setExpressRoute ({commit}, {expNo, expCode}) {
     try {
       let data = {
-        expCode,
-        expNo
+        expressName: expCode,
+        orderSn: expCode
       }
       data = JSON.stringify(data)
       const res = await request({
@@ -30,8 +30,8 @@ export const actions = {
       if (res.code === 200 && res.obj) {
         let data = {}
         data.mess = res.mess
-        data.reason = res.obj.Reason || ''
-        let Traces = res.obj.Traces
+        data.reason = res.mess || ''
+        let Traces = res.obj
         if (Traces.length > 0) {
           Traces = Traces.reverse()
         }

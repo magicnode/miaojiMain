@@ -1,14 +1,24 @@
 <template>
   <div class="addaddress">
     <div class="checkaddress" v-show="afterPaste">
-      请检查拆分地址是否准确，如有遗漏请及时补充
+      请检查解析地址是否准确，如有遗漏请及时补充
     </div>
     <div class="addaddress-container">
       <group>
          <x-input @on-focus="fixBtn" @on-blur="removeFixBtn" title="姓名" v-model="name" :max="20" placeholder="请填写您的真实姓名" required></x-input>
          <x-input @on-focus="fixBtn" @on-blur="removeFixBtn" title="手机" v-model="mobile" placeholder="手机、座机不可同时为空"></x-input>
-         <x-input @on-focus="fixBtn" @on-blur="removeFixBtn" title="座机" v-model="tel" placeholder="手机、座机不可同时为空"></x-input>
-         <x-address 
+         <flexbox :gutter="1" justify="end" class="tel-box">
+            <flexbox-item :span="5">
+                <x-input @on-focus="fixBtn" @on-blur="removeFixBtn" title="座机" v-model="telitem1" placeholder="区号"></x-input>
+            </flexbox-item>
+            <flexbox-item :span="2">
+                —
+            </flexbox-item>
+            <flexbox-item :span="5">
+                <x-input @on-focus="fixBtn" @on-blur="removeFixBtn" title="" v-model="telitem2" placeholder="号码"></x-input>
+            </flexbox-item>
+        </flexbox>
+         <x-address
            @on-focus="fixBtn"
            @on-blur="removeFixBtn" 
            v-if="pagetype === 'add'"
@@ -24,7 +34,7 @@
            v-if="pagetype === 'edit'"
            required
            title="地区" 
-           raw-value 
+           raw-value
            v-model="location" 
            :list="addressData" 
            placeholder="请选择省市区"></x-address>
@@ -40,8 +50,17 @@
          <div class="text">
            <textarea v-model="pasteAddress" name="aitext" :placeholder="aitextOptions['placeholder']"></textarea>
          </div>
-         <div class="submit">
-           <button type="" @click.stop="handelPasteAddress">提交</button>
+         <div class="submit flex">
+           <div class="fileinput-button">
+             <span>
+               图片识别
+             </span>
+             <!-- <button type="" @click.stop="handelPicPaste">图片识别</button> -->
+             <input type="file" accept="image/*" multiple value="图片识别" v-on:change="handelPicPaste($event)" >
+           </div>
+           <div>
+              <button type="" @click.stop="handelPasteAddress">智能解析</button>
+           </div>
          </div>
        </div>
        <div class="addaddress-container-add">
@@ -51,14 +70,18 @@
   </div>
 </template>
 <script>
-import { XInput, XSwitch, XTextarea, XAddress, ChinaAddressV4Data, Radio, Value2nameFilter as value2name } from 'vux'
+import { Flexbox, FlexboxItem, XInput, XSwitch, XTextarea, XAddress, ChinaAddressV4Data, Radio, Value2nameFilter as value2name } from 'vux'
 import { mapActions } from 'vuex'
 /* eslint-disable no-unused-vars */
 import { DICT_ARR } from '@/util/location'
+import * as wxUtil from '@/util/wx'
+import { useOcr } from '@/util/baiduAI'
 
 export default {
   name: 'addaddress',
   components: {
+    Flexbox,
+    FlexboxItem,
     XInput,
     XSwitch,
     XAddress,
@@ -72,28 +95,39 @@ export default {
       this.id = query.id
       this.name = query.name
       this.mobile = query.mobile
-      this.tel = query.tel
       this.address = query.address
       this.location = [query.province, query.city, query.district]
+      let tel = query.tel
+      tel = tel.split('-')
+      this.telitem1 = tel[0]
+      this.telitem2 = tel[1]
       if (query.checked === 1) {
         this.value = true
       }
     }
   },
-  mounted () {
+  async mounted () {
     let title = '添加地址'
     if (this.pagetype !== 'add') {
       title = '编辑地址'
     }
     window.document.title = title
+    await wxUtil.init()
+    window.wx.ready(function () {
+      console.log('微信jssdk初始化成功')
+    })
+    window.wx.error(function (res) {
+      console.log('res', res)
+    })
   },
   data () {
     return {
       pagetype: 'add',
       addressData: ChinaAddressV4Data,
       name: '',
+      telitem1: '',
+      telitem2: '',
       mobile: '',
-      tel: '',
       postcode: '',
       location: [],
       address: '',
@@ -105,8 +139,11 @@ export default {
   computed: {
     aitextOptions () {
       return {
-        placeholder: '粘贴整段地址，自动识别姓名、电话和地址 例：妙寄小哥，13700000000，上海市长宁区某某街道某某大厦001号'
+        placeholder: '粘贴整段地址后点击智能解析按钮，自动识别姓名、电话和地址 例：妙寄小哥，13700000000，上海市长宁区某某街道某某大厦001号'
       }
+    },
+    tel () {
+      return this.telitem1 + '-' + this.telitem2
     }
   },
   methods: {
@@ -119,6 +156,7 @@ export default {
       return reg.test(num)
     },
     checkTel (tel) {
+      console.log('tel', tel)
       const telReg = /^0\d{2,3}-?\d{7,8}$/
       return telReg.test(tel)
     },
@@ -343,6 +381,25 @@ export default {
         address
       }
     },
+    // 获取本地图片数据
+    handelPicPaste (event) {
+      const file = event.target.files[0]
+      if (!file.type.match('image.*')) {
+        return false
+      }
+      const reader = new FileReader()
+      // 读取文件
+      reader.readAsDataURL(file)
+      // 渲染文件
+      reader.onload = function (arg) {
+        let imageData = arg.target.result
+        imageData = imageData.replace('data:image/jpeg;base64,/', '')
+        console.log('imageData', imageData)
+        useOcr({
+          image: imageData
+        })
+      }
+    },
     handelPasteAddress () {
       try {
         let text = this.pasteAddress
@@ -397,6 +454,24 @@ export default {
         border-radius: 0;
       }
     }
+    .tel-box {
+      padding-left: 8px;
+    }
+    .tel-box:before {
+      content: " ";
+      position: absolute;
+      left: 0;
+      top: 84px;
+      right: 0;
+      height: 1px;
+      border-top: 1px solid #D9D9D9;
+      color: #D9D9D9;
+      -webkit-transform-origin: 0 0;
+      transform-origin: 0 0;
+      -webkit-transform: scaleY(0.5);
+      transform: scaleY(0.5);
+      left: 15px;
+    }
     .g-radio {
       padding: 1rem;
       padding-right: 0;
@@ -432,14 +507,35 @@ export default {
         }
       }
       .submit {
+        padding-left: .5rem;
         padding-right: .5rem;
         text-align: right;
+        justify-content: space-between;
+        align-items: center;
         button {
           padding: .2rem 1.2rem;
           color: @dark-yellow;
           border: 1px solid @dark-yellow;
           background: transparent;
           border-radius: 3px;
+        }
+        .fileinput-button {
+          span {
+            margin-top: 5px;
+            position: absolute;
+            padding: .2rem 1.2rem;
+            color: @dark-yellow;
+            border: 1px solid @dark-yellow;
+            background: transparent;
+            border-radius: 3px;
+          }
+          input {
+            width: 70px;
+            height: 30px;
+            background-color: #000000;
+            opacity: 0;
+            overflow: hidden;
+          }
         }
       }
     }

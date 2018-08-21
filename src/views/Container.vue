@@ -28,22 +28,34 @@ export default {
       storage({
         type: 'set',
         key: 'openid',
-        val: 'oCk9ywj_I6hLEwH7j-KBfJkIrDwE'
+        val: 'op41I0w1RqzUfG6C8W_okT3oGlG0'
       })
+      // storage({
+      //   type: 'set',
+      //   key: 'mobile',
+      //   val: '17602180495'
+      // })
       storage({
         type: 'set',
         key: 'mobile',
-        val: '17602180495'
+        val: '17317272575'
       })
+      // 本地
+      // storage({
+      //   type: 'set',
+      //   key: 'userId',
+      //   val: '13833'
+      // })
+      // 张子锐
+      // storage({
+      //   type: 'set',
+      //   key: 'userId',
+      //   val: '11834'
+      // })
       storage({
         type: 'set',
         key: 'userId',
-        val: '8531'
-      })
-      storage({
-        type: 'set',
-        key: 'userId',
-        val: '12'
+        val: '11860'
       })
       return
     }

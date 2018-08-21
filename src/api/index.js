@@ -8,12 +8,15 @@ switch (NODE_ENV) {
     // wu cong 本地
     // url = 'http://192.168.0.168:8088/WeChatService/'
     // url = 'http://192.168.0.66:8088/WeChatService/'
-    url = 'http://192.168.231.50:8088/WeChatService/'
+    // url = 'http://192.168.231.50:8088/WeChatService/'
+    // url = 'http://192.168.231.112:8088/WeChatService/'
     // online app 云端服务
-    url = 'http://app.quandikeji.com/WeChatService/'
+    // url = 'http://app.quandikeji.com/WeChatService/'
+    url = 'http://main.mijihome.cn/WeChatService/'
     break
   case 'pro':
-    url = 'http://app.quandikeji.com/WeChatService/'
+    // url = 'http://app.quandikeji.com/WeChatService/'
+    url = 'http://main.mijihome.cn/WeChatService/'
     break
   case 'taian':
     url = 'http://wechat.mijihome.cn/WeChatServiceTA/'
@@ -82,10 +85,15 @@ export const express = {
   // url = url + 'brand=' + brand + '&orderSn=' + orderSn
   route: 'http://app.quandikeji.com:8088/quandiExpressSite1.4.0/Logistics/queryLogisticsInfoForJson',
   jdTrace: 'http://app.quandikeji.com:8288/JDService/order/orderTrace',
-  kdn: 'http://www.mijihome.cn:8088/ExpressCompany/ExpressOperation/KdniaoTrackQuery'
+  kdn: 'http://www.mijihome.cn:8088/ExpressCompany/ExpressOperation/queryExpreeRouteInfo'
 }
 
 export const bug = {
   // ?param=5512341545454
   index: url + 'errorReport'
+}
+
+export const baiduAI = {
+  accessToken: 'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=yRRjUoBIOSnA0y4efZNPZWId&client_secret=7c1tXA8N0hPRcoMYIVxqreGT03GsL8dE&',
+  ocr: 'https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic'
 }

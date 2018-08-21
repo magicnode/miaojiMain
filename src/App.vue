@@ -1,9 +1,6 @@
 <template>
   <div id="app">
     <router-view></router-view>
-<!--     <transition name="pic">
-      <img class="loading-img" v-show="isJump" :src="jumpSrc" alt="">
-    </transition> -->
     <loading v-model="isLoading"></loading>
   </div>
 </template>
