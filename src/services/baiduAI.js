@@ -35,3 +35,18 @@ export async function getOcr (data) {
     data
   })
 }
+
+/**
+ * [使用百度ocr接口]
+ * @param  {[type]} data [description]
+ * @return {[type]}      [description]
+ */
+export async function getocrAccurate (params, config) {
+  let url = baiduAIApi.ocrAccurate
+  return request({
+    url,
+    method: 'post',
+    params,
+    config
+  })
+}

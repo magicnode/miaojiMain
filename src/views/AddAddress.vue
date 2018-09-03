@@ -56,7 +56,7 @@
                图片识别
              </span>
              <!-- <button type="" @click.stop="handelPicPaste">图片识别</button> -->
-             <input type="file" accept="image/*" multiple value="图片识别" v-on:change="handelPicPaste($event)" >
+             <input type="file" accept="image/*" multiple :value="imageVal" v-on:change="handelPicPaste($event)" >
            </div>
            <div>
               <button type="" @click.stop="handelPasteAddress">智能解析</button>
@@ -73,9 +73,9 @@
 import { Flexbox, FlexboxItem, XInput, XSwitch, XTextarea, XAddress, ChinaAddressV4Data, Radio, Value2nameFilter as value2name } from 'vux'
 import { mapActions } from 'vuex'
 /* eslint-disable no-unused-vars */
+import { getocrAccurate } from '@/services/baiduAI'
 import { DICT_ARR } from '@/util/location'
 import * as wxUtil from '@/util/wx'
-import { useOcr } from '@/util/baiduAI'
 
 export default {
   name: 'addaddress',
@@ -133,7 +133,8 @@ export default {
       address: '',
       value: false,
       pasteAddress: '',
-      afterPaste: false
+      afterPaste: false,
+      imageVal: ''
     }
   },
   computed: {
@@ -178,7 +179,7 @@ export default {
             })
             return
           }
-          if (!_this.tel && !_this.mobile) {
+          if (!_this.telitem2 && !_this.mobile) {
             _this.$vux.toast.show({
               text: '手机号，座机号不能同时为空',
               type: 'warn',
@@ -196,7 +197,7 @@ export default {
               return
             }
           }
-          if (_this.tel) {
+          if (_this.telitem2) {
             if (!_this.checkTel(_this.tel)) {
               _this.$vux.toast.show({
                 text: '座机格式不对，请重新填写',
@@ -216,15 +217,31 @@ export default {
       const checked = this.value ? 1 : 2
       let {type} = this.$route.query
       type = type === 'pickup' ? 2 : 1
-      if (!this.name || !this.address || !this.location) {
+      if (!this.name) {
         this.$vux.toast.show({
-          text: '请将信息填写完整',
+          text: '请填写姓名',
           type: 'warn',
-          width: '20rem'
+          width: '18rem'
         })
         return
       }
-      if (!this.tel && !this.mobile) {
+      if (!this.address) {
+        this.$vux.toast.show({
+          text: '请填写详细地址',
+          type: 'warn',
+          width: '18rem'
+        })
+        return
+      }
+      if (!this.location) {
+        this.$vux.toast.show({
+          text: '请填写地址',
+          type: 'warn',
+          width: '18rem'
+        })
+        return
+      }
+      if (!this.telitem2 && !this.mobile) {
         this.$vux.toast.show({
           text: '手机号，座机号不能同时为空',
           type: 'warn',
@@ -242,7 +259,7 @@ export default {
           return
         }
       }
-      if (this.tel) {
+      if (this.telitem2) {
         if (!this.checkTel(this.tel)) {
           this.$vux.toast.show({
             text: '座机格式不对，请重新填写',
@@ -382,22 +399,53 @@ export default {
       }
     },
     // 获取本地图片数据
-    handelPicPaste (event) {
-      const file = event.target.files[0]
-      if (!file.type.match('image.*')) {
-        return false
-      }
-      const reader = new FileReader()
-      // 读取文件
-      reader.readAsDataURL(file)
-      // 渲染文件
-      reader.onload = function (arg) {
-        let imageData = arg.target.result
-        imageData = imageData.replace('data:image/jpeg;base64,/', '')
-        console.log('imageData', imageData)
-        useOcr({
-          image: imageData
+    async handelPicPaste (event) {
+      try {
+        this.$vux.loading.show({
+          text: '  '
         })
+        const file = event.target.files[0]
+        if (!file.type.match('image.*')) {
+          return false
+        }
+        let param = new FormData()
+        param.append('image', file, file.name)
+        let config = {
+          timeout: 20000,
+          headers: {'Content-Type': 'multipart/form-data'}
+        }
+        const result = await getocrAccurate(param, config)
+        console.log('result', result)
+        this.$vux.loading.hide()
+        if (result.code === 1) {
+          this.$vux.toast.show({
+            text: '上传成功',
+            type: 'success',
+            width: '18rem'
+          })
+          const wordData = result.data
+          let wordsResult = wordData.words_result
+          wordsResult = wordsResult.map(function (item) {
+            return item.words
+          })
+          this.pasteAddress = wordsResult.join('，')
+        } else {
+          this.$vux.toast.show({
+            text: '上传失败',
+            type: 'warn',
+            width: '18rem'
+          })
+        }
+      } catch (error) {
+        console.log(error)
+        this.$vux.loading.hide()
+        this.$vux.toast.show({
+          text: '上传失败',
+          type: 'warn',
+          width: '18rem'
+        })
+      } finally {
+        this.imageVal = ''
       }
     },
     handelPasteAddress () {
@@ -426,7 +474,7 @@ export default {
   }
 }
 </script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+<!-- Add "scoped" attibute to limit CSS to this component only -->
 <style lang="less" scoped>
 @import '../assets/styles/colors.less';
 .addaddress {
@@ -518,6 +566,7 @@ export default {
           border: 1px solid @dark-yellow;
           background: transparent;
           border-radius: 3px;
+          font-size: 14px;
         }
         .fileinput-button {
           span {
@@ -528,6 +577,7 @@ export default {
             border: 1px solid @dark-yellow;
             background: transparent;
             border-radius: 3px;
+            font-size: 14px;
           }
           input {
             width: 70px;

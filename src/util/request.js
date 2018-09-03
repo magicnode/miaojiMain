@@ -8,7 +8,8 @@ const fetch = (options) => {
     data,
     paramkey,
     params,
-    url
+    url,
+    config
   } = options
 
   const cloneData = lodash.cloneDeep(data)
@@ -65,10 +66,9 @@ const fetch = (options) => {
         data: cloneData,
         params,
         timeout: 5000,
-        headers: {
-          'content-Type': 'application/x-www-form-urlencoded'
-        }
+        config
       })
+      // return axios.post(url, params, config)
     case 'put':
       return axios.put(url, cloneData)
     case 'patch':

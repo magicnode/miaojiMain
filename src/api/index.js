@@ -51,7 +51,8 @@ export const brand = {
 }
 
 export const site = {
-  location: url + 'COORDINATES'
+  location: url + 'COORDINATES',
+  search: 'http://106.14.212.146:8288/quandiExpressSiteManager/store'
 }
 
 export const pickup = {
@@ -95,5 +96,6 @@ export const bug = {
 
 export const baiduAI = {
   accessToken: 'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=yRRjUoBIOSnA0y4efZNPZWId&client_secret=7c1tXA8N0hPRcoMYIVxqreGT03GsL8dE&',
-  ocr: 'https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic'
+  ocr: 'https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic',
+  ocrAccurate: 'http://mydanzhao.com/api/baidu/ocr'
 }
