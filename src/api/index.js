@@ -79,14 +79,15 @@ export const wx = {
   webtoken: 'https://api.weixin.qq.com/sns/oauth2/access_token',
   jssdkInit: url + 'PayController/getWxConfig',
   wxpayInit: url + 'PayController/unifiedOrder',
-  redirect: url + 'OAuth'
+  redirect: url + 'OAuth',
+  shoppayInit: url + 'ShopController/unifiedOrder'
 }
 
 export const express = {
   // url = url + 'brand=' + brand + '&orderSn=' + orderSn
   route: 'http://app.quandikeji.com:8088/quandiExpressSite1.4.0/Logistics/queryLogisticsInfoForJson',
   jdTrace: 'http://app.quandikeji.com:8288/JDService/order/orderTrace',
-  kdn: 'http://www.mijihome.cn:8088/ExpressCompany/ExpressOperation/queryExpreeRouteInfo'
+  kdn: 'http://main.mijihome.cn:8088/ExpressCompany/ExpressOperation/queryExpreeRouteInfo'
 }
 
 export const bug = {
@@ -98,4 +99,5 @@ export const baiduAI = {
   accessToken: 'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=yRRjUoBIOSnA0y4efZNPZWId&client_secret=7c1tXA8N0hPRcoMYIVxqreGT03GsL8dE&',
   ocr: 'https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic',
   ocrAccurate: 'http://mydanzhao.com/api/baidu/ocr'
+  // ocrAccurate: 'http://www.batman.com:8300/api/baidu/ocr'
 }

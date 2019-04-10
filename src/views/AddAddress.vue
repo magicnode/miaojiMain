@@ -55,8 +55,9 @@
              <span>
                图片识别
              </span>
-             <!-- <button type="" @click.stop="handelPicPaste">图片识别</button> -->
-             <input type="file" accept="image/*" multiple :value="imageVal" v-on:change="handelPicPaste($event)" >
+             <!-- <input type="file" accept="image/*" :value="imageVal" v-on:change="handelPicPaste($event)" > -->
+             <input type="file" accept="image/*" :value="imageVal">
+             <button type="" @click.stop="handelPicPaste">上传</button>
            </div>
            <div>
               <button type="" @click.stop="handelPasteAddress">智能解析</button>
@@ -404,26 +405,25 @@ export default {
         this.$vux.loading.show({
           text: '  '
         })
+        console.log('imageVal', this.imageVal)
         const file = event.target.files[0]
         if (!file.type.match('image.*')) {
           return false
         }
-        let param = new FormData()
-        param.append('image', file, file.name)
-        let config = {
-          timeout: 20000,
-          headers: {'Content-Type': 'multipart/form-data'}
-        }
-        const result = await getocrAccurate(param, config)
-        console.log('result', result)
+        let formData = new FormData()
+        // alert(file)
+        // alert(file.name)
+        formData.append('image', file, file.name)
+        const result = await getocrAccurate(formData)
+        const resData = result.data
         this.$vux.loading.hide()
-        if (result.code === 1) {
+        if (resData.code === 1) {
           this.$vux.toast.show({
             text: '上传成功',
             type: 'success',
             width: '18rem'
           })
-          const wordData = result.data
+          const wordData = resData.data
           let wordsResult = wordData.words_result
           wordsResult = wordsResult.map(function (item) {
             return item.words

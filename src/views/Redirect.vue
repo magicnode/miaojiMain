@@ -8,20 +8,30 @@ import {storage} from '@/util'
 
 export default {
   created () {
-    let {openid} = this.$route.query
+    let {openid, state} = this.$route.query
     if (!openid) {
       console.log('Redirect.vue: no code fail')
-    } else {
-      storage({
-        type: 'remove',
-        key: 'openid'
-      })
-      storage({
-        type: 'set',
-        key: 'openid',
-        val: openid
-      })
+      return
+    }
+    if (!state) {
+      console.log('Redirect.vue: no state fail')
+      return
+    }
+    storage({
+      type: 'remove',
+      key: 'openid'
+    })
+    storage({
+      type: 'set',
+      key: 'openid',
+      val: openid
+    })
+    if (state === 'web') {
       this.$router.push({path: '/init'})
+    } else if (state === 'shop') {
+      const url = 'http://shop.mijihome.cn?openid=' + openid
+      window.location.href = url
+      return
     }
   },
   data () {

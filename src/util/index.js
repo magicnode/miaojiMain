@@ -1,5 +1,7 @@
 import lodash from 'lodash'
 import config from 'config'
+import { Base64 } from 'js-base64'
+import CryptoJS from 'crypto-js'
 import { localPrefix } from './config'
 
 // 连字符转驼峰
@@ -199,6 +201,55 @@ function getRating (rating) {
   return '★★★★★☆☆☆☆☆'.substring(5 - rating, 10 - rating)
 }
 
+/**
+ * [解密]
+ * @param  {[type]} data [description]
+ * @return {[string]}        [description]
+ */
+function decryptData (data, type = 'normal') {
+  let decData = ''
+  if (type === 'str') {
+    decData = data
+  } else {
+    delete data.message
+    delete data.statusCode
+    delete data.success
+    for (let item in data) {
+      decData += data[item]
+    }
+  }
+  // 秘钥key
+  // key不足24位自动以0(最小位数是0)补齐,如果多余24位,则截取前24位,后面多余则舍弃掉
+  const key = 'NNcJxzQePoNP2V5E8tughsA0'
+  const base64 = CryptoJS.enc.Utf8.parse(key)
+  const iv = CryptoJS.enc.Utf8.parse('9dBgh0GS')
+  let decrypt = CryptoJS.TripleDES.decrypt(decData, base64, {
+    iv: iv,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.NoPadding
+  })
+  let parseData = CryptoJS.enc.Base64.stringify(decrypt)
+  parseData = Base64.decode(parseData)
+  // console.log('Base64 parseData String', parseData)
+  if (parseData.indexOf('"obj":[') !== -1) {
+    parseData = parseData.split(']}')[0]
+    parseData += ']}'
+  } else if (parseData.indexOf('"obj":{') !== -1) {
+    parseData = parseData.split('}}')[0]
+    parseData += '}}'
+  } else if (parseData.indexOf('"}') !== -1) {
+    parseData = parseData.split('"}')[0]
+    parseData += '"}'
+  } else {
+    parseData = parseData.split('}')[0]
+    parseData += '}'
+  }
+  // console.log('Base64 parseData pure String', parseData)
+  parseData = JSON.parse(parseData)
+  console.log('Base64 parseData JSON', parseData)
+  return parseData
+}
+
 export {
   queryURL,
   queryArray,
@@ -206,5 +257,6 @@ export {
   getNameById,
   getConfByEnv,
   storage,
-  getRating
+  getRating,
+  decryptData
 }

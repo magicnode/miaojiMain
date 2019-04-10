@@ -38,7 +38,7 @@
          <span :class="{'darkyellow': (Number(query.expresstype) === 0), 'lightyellow': (Number(query.expresstype) !== 0)}" class="pickupqr-detail-box__content" >{{query.expresstype | pickupstate}}</span>
        </div>
      </div>
-     <div class="pickupqr-detail">
+     <div class="pickupqr-detail" v-show="query.modelId !== 6">
        <div class="pickupqr-detail-box">
          <span class="pickupqr-detail-box__title">取件站点</span>
          <span class="pickupqr-detail-box__yin">:</span>
@@ -78,12 +78,15 @@ export default {
   async created () {
     const query = this.$route.query
     const userId = query.userId
+    const modelId = query.modelId
+    const resvOrder = query.resvOrder
     this.qr = picApi.pickupqr + '?orderSn=' + query.orderSn + '&userId=' + userId || storage({
       type: 'get',
       key: 'userId'
     })
     this.query = query
-    const office = await this.$http.post(addressApi.officelocation + '?userId=' + query.userId)
+    const officelocationUrl = `${addressApi.officelocation}?userId=${userId}&modelId=${modelId}&resvOrder=${resvOrder}`
+    const office = await this.$http.post(officelocationUrl)
     this.state = query.state || '101'
     if (office.status !== 200) {
       this.$vux.toast.show({

@@ -30,3 +30,17 @@ export async function getWxPayConfig (data) {
     data
   })
 }
+
+/**
+ * [获取商城微信pay参数]
+ * @param  {[type]} data [description]
+ * @return {[type]}      [description]
+ */
+export async function getShopPayConfig (data) {
+  return request({
+    url: wxApi.shoppayInit,
+    method: 'parampost',
+    paramkey: 'param',
+    data
+  })
+}

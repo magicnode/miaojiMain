@@ -18,8 +18,8 @@
           </div>
           
           <div class="logisticsresult-content--part">            
-            <p class="minute">{{part.AcceptTime}}</p>
-            <p>{{part.AcceptStation}}</p>
+            <p class="minute">{{part.time}}</p>
+            <p>{{part.info}}</p>
           </div>
         </div>
       </div>

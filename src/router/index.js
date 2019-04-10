@@ -25,6 +25,7 @@ const test = r => require.ensure([], () => r(require('@/views/Test')), 'Test')
 const officelocation = r => require.ensure([], () => r(require('@/views/OfficeLocation')), 'OfficeLocation')
 const userpackage = r => require.ensure([], () => r(require('@/views/UserPackage')), 'UserPackage')
 const customerservice = r => require.ensure([], () => r(require('@/views/CustomerService')), 'CustomerService')
+const shopPay = r => require.ensure([], () => r(require('@/views/ShopPay')), 'ShopPay')
 
 export default new Router({
   // mode: 'history',
@@ -157,5 +158,9 @@ export default new Router({
     meta: {
       intro: '快递路由信息'
     }
+  }, {
+    path: '/shopmijihomepay',
+    name: 'shopPay',
+    component: shopPay
   }]
 })

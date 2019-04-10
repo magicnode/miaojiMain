@@ -1,4 +1,5 @@
 import {express as expressApi} from '@/api'
+import { decryptData } from '@/util'
 import request from '@/util/request'
 
 import * as types from '../mutation-types'
@@ -18,7 +19,7 @@ export const actions = {
     try {
       let data = {
         expressName: expCode,
-        orderSn: expCode
+        orderSn: expNo
       }
       data = JSON.stringify(data)
       const res = await request({
@@ -27,11 +28,12 @@ export const actions = {
         paramkey: 'param',
         data
       })
-      if (res.code === 200 && res.obj) {
+      const decryptRes = decryptData(res)
+      if (decryptRes.code === 200 && decryptRes.obj) {
         let data = {}
-        data.mess = res.mess
-        data.reason = res.mess || ''
-        let Traces = res.obj
+        data.mess = decryptRes.mess
+        data.reason = decryptRes.mess || ''
+        let Traces = decryptRes.obj
         if (Traces.length > 0) {
           Traces = Traces.reverse()
         }
@@ -39,20 +41,27 @@ export const actions = {
         commit(types.SET_EXPRESS_ROTUE, {data})
         return {
           type: 'success',
-          info: '获取路由成功',
+          text: '获取路由成功',
+          width: '15rem'
+        }
+      }
+      if (decryptRes.code === 201) {
+        return {
+          type: 'warn',
+          text: decryptRes.mess,
           width: '15rem'
         }
       }
       return {
         type: 'warn',
-        info: '获取路由失败',
+        text: '获取路由失败',
         width: '15rem'
       }
     } catch (e) {
       console.error(e)
       return {
         type: 'warn',
-        info: '获取路由失败',
+        text: '获取路由失败',
         width: '15rem'
       }
     }

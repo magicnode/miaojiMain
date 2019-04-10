@@ -1,6 +1,6 @@
 import axios from 'axios'
 import {send as sendApi, address as addressApi} from '@/api'
-import {storage} from '@/util'
+import {storage, decryptData} from '@/util'
 import request from '@/util/request'
 
 import * as types from '../mutation-types'
@@ -71,12 +71,13 @@ export const actions = {
         type: 'get',
         key: 'userId'
       })
-      const res = await request({
+      let res = await request({
         url: sendApi.index,
         method: 'parampost',
         paramkey: 'param',
         data: JSON.stringify({userId: userId})
       })
+      res = decryptData(res)
       if (res.code === 200) {
         let resdata = res.obj
         let data = {}
@@ -154,7 +155,7 @@ export const actions = {
       paramData = JSON.stringify(paramData)
       let param = new URLSearchParams()
       param.append('param', paramData)
-      const res = await axios({
+      let res = await axios({
         url: sendApi.create,
         method: 'post',
         data: param,
@@ -163,14 +164,14 @@ export const actions = {
           'content-Type': 'application/x-www-form-urlencoded'
         }
       })
-      if (res.data) {
-        const data = res.data
+      res = decryptData(res)
+      if (res.code === 200) {
         commit(types.SET_SEND_RES, {show: true, type: 'success', info: '寄件成功'})
         await dispatch('setSend')
         return {
-          code: data.code,
-          mess: data.mess,
-          obj: data.obj
+          code: res.code,
+          mess: res.mess,
+          obj: res.obj
         }
       } else {
         commit(types.SET_SEND_RES, {show: true, type: 'warn', info: '寄件失败'})
@@ -218,12 +219,13 @@ export const actions = {
   },
   async setSingleSend ({commit}, {id}) {
     try {
-      const res = await request({
+      let res = await request({
         url: sendApi.index,
         method: 'parampost',
         paramkey: 'param',
         data: JSON.stringify({id})
       })
+      res = decryptData(res)
       if (res.code === 200) {
         let data = res.obj[0]
         commit(types.SET_QR_SEND, {data})

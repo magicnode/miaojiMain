@@ -8,13 +8,13 @@
           autocomplete="off" 
           autocorrect="off" 
           name="word"
+          autofocus="autofocus"
           placeholder="输入站点名称搜索"
           class="ser-input" />
         <div class="ser-inner">
           <button class="ser-bn" type="submit" @click="btnSearch">点击搜索</button>
         </div>
       </div>
-
       <div class="index-box" v-show="showSearch">
         <div class="suggest-div">
           <div class="suggest-direct" style="display: none;"></div>

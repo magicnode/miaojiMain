@@ -1,6 +1,7 @@
 /**
  * 百度AI
  */
+import axios from 'axios'
 import { storage } from '@/util'
 import request from '@/util/request'
 import { baiduAI as baiduAIApi } from '@/api'
@@ -41,12 +42,13 @@ export async function getOcr (data) {
  * @param  {[type]} data [description]
  * @return {[type]}      [description]
  */
-export async function getocrAccurate (params, config) {
-  let url = baiduAIApi.ocrAccurate
-  return request({
-    url,
-    method: 'post',
-    params,
-    config
+export async function getocrAccurate (formData) {
+  let instance = axios.create({
+    baseURL: 'http://mydanzhao.com',
+    timeout: 20000,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   })
+  return instance.post('/api/baidu/ocr', formData)
 }

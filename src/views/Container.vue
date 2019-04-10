@@ -30,31 +30,22 @@ export default {
         key: 'openid',
         val: 'op41I0w1RqzUfG6C8W_okT3oGlG0'
       })
-      // storage({
-      //   type: 'set',
-      //   key: 'mobile',
-      //   val: '17602180495'
-      // })
       storage({
         type: 'set',
         key: 'mobile',
-        val: '17317272575'
+        // val: '17602180495'
+        // val: '17317272575'
+        // 王梦蕾
+        val: '13611671430'
+        // 刘思远
+        // val: '17521008043'
       })
-      // 本地
-      // storage({
-      //   type: 'set',
-      //   key: 'userId',
-      //   val: '13833'
-      // })
-      // 张子锐
-      // storage({
-      //   type: 'set',
-      //   key: 'userId',
-      //   val: '11834'
-      // })
       storage({
         type: 'set',
         key: 'userId',
+        // val: '13833'
+        // 张子锐
+        // val: '11834'
         val: '11860'
       })
       return

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import {pickup as pickupApi, send as sendApi} from '@/api'
-import {storage} from '@/util'
+import {storage, decryptData} from '@/util'
 import request from '@/util/request'
 
 import * as types from '../mutation-types'
@@ -40,10 +40,11 @@ export const getters = {
 export const actions = {
   async initPackagePickUp ({ commit }, {query = {mobile: '', page: 1, rows: 5}}) {
     try {
-      const res = await instance.get(pickupApi.all, {
+      let res = await instance.get(pickupApi.all, {
         params: query
       })
-      if (res.status === 200) {
+      res = decryptData(res)
+      if (res.code === 200) {
         const data = res.data
         query.page = query.page + 1
         commit(types.SET_PACKAGE_PICKUP, {data, query})
@@ -66,10 +67,11 @@ export const actions = {
   },
   async addPackagePickUp ({ commit }, {query = {mobile: '', page: 1, rows: 5}}) {
     try {
-      const res = await instance.get(pickupApi.all, {
+      let res = await instance.get(pickupApi.all, {
         params: query
       })
-      if (res.status === 200) {
+      res = decryptData(res)
+      if (res.code === 200) {
         let resdata = res.data
         let data = state.pickup.data
         if (resdata.length <= 0) {
@@ -105,12 +107,13 @@ export const actions = {
         type: 'get',
         key: 'userId'
       })
-      const res = await request({
+      let res = await request({
         url: sendApi.index,
         method: 'parampost',
         paramkey: 'param',
         data: JSON.stringify({userId: userId})
       })
+      res = decryptData(res)
       if (res.code === 200) {
         const data = res.obj
         commit(types.SET_PACKAGE_SEND, {data, query})
@@ -137,12 +140,13 @@ export const actions = {
         type: 'get',
         key: 'userId'
       })
-      const res = await request({
+      let res = await request({
         url: sendApi.index,
         method: 'parampost',
         paramkey: 'param',
         data: JSON.stringify({userId: userId})
       })
+      res = decryptData(res)
       if (res.code === 200) {
         let data = res.obj
         commit(types.SET_PACKAGE_SEND, {data, query})

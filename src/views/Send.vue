@@ -61,7 +61,7 @@
       <div class="send-container-select">
         <group label-width="6rem" label-align="left">
           <cell class="office" title="寄件站点" is-link link="/hallmap">{{office || '选择寄件站点'}}</cell>
-          <selector direction="rtl" v-model="expresstype" placeholder="选择快递品牌"   title="快递品牌" name="district" :options="brandOption" @on-change="onChange">
+          <selector direction="rtl" v-model="expresstype" placeholder="选择快递品牌"  title="快递品牌" name="district" :options="brandOption" @on-change="onChange">
           </selector>
           <x-textarea type="text" title="物品描述" :show-counter="false" :max="max" :autosize="true" placeholder="描述你的物品 (200字限制)" :rows="1" v-model="describe" :height="describe ? describe.length + 22 : 20" @on-focus="hideFooter" @on-blur="onChangeText('describe')">
           </x-textarea>
@@ -268,7 +268,7 @@ export default {
           openid
         }
         const result = await this.createSend(sendParam)
-        console.log('res', result)
+        console.log('result', result)
         if (result.code === 200) {
           this.showToast({text: '提交成功'})
           const id = result.obj
