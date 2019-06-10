@@ -55,14 +55,15 @@
              <span>
                图片识别
              </span>
-             <!-- <input type="file" accept="image/*" :value="imageVal" v-on:change="handelPicPaste($event)" > -->
-             <input type="file" accept="image/*" :value="imageVal">
-             <button type="" @click.stop="handelPicPaste">上传</button>
+             <input type="file" accept="image/*" :value="imageVal" v-on:change="handelPicPaste($event)" >
            </div>
            <div>
               <button type="" @click.stop="handelPasteAddress">智能解析</button>
            </div>
          </div>
+         <img :src="imgSrc" id="showimg" width="200">
+         <div id="canvas" width="200" height="200"></div>
+
        </div>
        <div class="addaddress-container-add">
          <p class="addaddress-container-add--btn" @click.stop="saveAddress">保存</p>
@@ -135,7 +136,8 @@ export default {
       value: false,
       pasteAddress: '',
       afterPaste: false,
-      imageVal: ''
+      imageVal: '',
+      imgSrc: ''
     }
   },
   computed: {
@@ -405,14 +407,13 @@ export default {
         this.$vux.loading.show({
           text: '  '
         })
-        console.log('imageVal', this.imageVal)
         const file = event.target.files[0]
         if (!file.type.match('image.*')) {
           return false
         }
+        const url = this.getObjectURL(file)
+        this.imgSrc = url
         let formData = new FormData()
-        // alert(file)
-        // alert(file.name)
         formData.append('image', file, file.name)
         const result = await getocrAccurate(formData)
         const resData = result.data
@@ -448,6 +449,23 @@ export default {
         this.imageVal = ''
       }
     },
+    // 建立一個可存取到該file的url
+    getObjectURL (file) {
+      let url = null
+      // 下面函数执行的效果是一样的，只是需要针对不同的浏览器执行不同的 js 函数而已
+      if (window.createObjectURL !== undefined) {
+        // basic
+        url = window.createObjectURL(file)
+      } else if (window.URL !== undefined) {
+        // mozilla(firefox)
+        url = window.URL.createObjectURL(file)
+      } else if (window.webkitURL !== undefined) {
+        // webkit or chrome
+        url = window.webkitURL.createObjectURL(file)
+      }
+      return url
+    },
+    // 处理文本框中的地址信息
     handelPasteAddress () {
       try {
         let text = this.pasteAddress

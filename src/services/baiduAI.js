@@ -45,6 +45,7 @@ export async function getOcr (data) {
 export async function getocrAccurate (formData) {
   let instance = axios.create({
     baseURL: 'http://mydanzhao.com',
+    // baseURL: 'http://www.batman.com:8300',
     timeout: 20000,
     headers: {
       'Content-Type': 'multipart/form-data'

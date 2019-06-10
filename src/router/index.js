@@ -11,6 +11,7 @@ const pickup = r => require.ensure([], () => r(require('@/views/PickUp')), 'Pick
 const pickuptest = r => require.ensure([], () => r(require('@/views/PickUpTest')), 'PickUpTest')
 const address = r => require.ensure([], () => r(require('@/views/Address')), 'Address')
 const addaddress = r => require.ensure([], () => r(require('@/views/AddAddress')), 'AddAddress')
+const showpic = r => require.ensure([], () => r(require('@/views/ShowPic')), 'ShowPic')
 const editaddress = r => require.ensure([], () => r(require('@/views/EditAddress')), 'EditAddress')
 const pickupdetail = r => require.ensure([], () => r(require('@/views/PickUpDetail')), 'PickUpDetail')
 const senddetail = r => require.ensure([], () => r(require('@/views/SendDetail')), 'SendDetail')
@@ -80,6 +81,11 @@ export default new Router({
     path: '/address/add',
     name: 'AddAddress',
     component: addaddress,
+    meta: { scrollToTop: true }
+  }, {
+    path: '/address/showpic',
+    name: 'ShowPic',
+    component: showpic,
     meta: { scrollToTop: true }
   }, {
     path: '/address/edit',

@@ -52,7 +52,9 @@ export const brand = {
 
 export const site = {
   location: url + 'COORDINATES',
-  search: 'http://106.14.212.146:8288/quandiExpressSiteManager/store'
+  // search: 'http://106.14.212.146:8288/quandiExpressSiteManager/store'
+  // search: 'http://47.101.42.216/WeChatService/store'
+  search: url + 'store'
 }
 
 export const pickup = {

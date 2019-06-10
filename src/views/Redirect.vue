@@ -64,7 +64,7 @@ body {
 @media screen and (min-width:1200px){html{font-size:30px}}
 
 #app {
-	font-family: 'Microsoft YaHei', 'Avenir', Helvetica, Arial, sans-serif;
+	font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
